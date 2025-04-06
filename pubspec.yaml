@@ -21,5 +21,6 @@ flutter:
     uses-material-design: true
     assets:
         - assets/sprites/
+        - assets/sprites/dash/
         - assets/sounds/
         - assets/images/

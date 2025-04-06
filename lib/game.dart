@@ -1,5 +1,6 @@
 import 'package:flappy_dash_ce/core/game_object.dart';
 import 'package:flappy_dash_ce/core/game_painter.dart';
+import 'package:flappy_dash_ce/core/physics.dart';
 import 'package:flappy_dash_ce/core/sprite.dart';
 import 'package:flappy_dash_ce/game/dash.dart';
 import 'package:flutter/material.dart';
@@ -31,14 +32,17 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    loadSprite('assets/sprites/dash_still.png').then((sprite) => {
+    loadSprite('assets/sprites/dash/dash_spritesheet.png').then((sprite) => {
           dash = Dash(
-            sprite: sprite,
-            position: const Offset(100, 100),
-            size: const Size(50, 50),
+            spriteSheet: sprite,
+            size: const Size(64, 64),
+            physics: Physics(
+              position: const Offset(50, 100),
+            ),
           ),
           gameObjects.add(dash),
         });
+    //loadSprite('assets/images/static_background').then((sprite) => {})
     ticker = createTicker(_onTick)..start();
     super.initState();
   }
@@ -52,11 +56,22 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Container(
-        color: Colors.white,
-        child: CustomPaint(
-          painter: GamePainter(gameObjects: gameObjects),
-          size: Size.infinite,
+      child: GestureDetector(
+        onTap: () {
+          dash.flap();
+        },
+        child: Container(
+          color: Colors.white,
+          /*decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/static_background.webp'),
+              fit: BoxFit.cover,
+            ),
+          ),*/
+          child: CustomPaint(
+            painter: GamePainter(gameObjects: gameObjects),
+            size: Size.infinite,
+          ),
         ),
       ),
     );
