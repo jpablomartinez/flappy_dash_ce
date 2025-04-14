@@ -10,13 +10,15 @@ class Physics {
   double jumpTime = 0;
   double velocityY = 0;
   double maxJumpTime;
+  double angle = 0;
+  double tiltDelayTimer = 0;
 
   Physics({
     required this.position,
-    this.gravity = 420,
-    this.impulse = -260,
-    this.maxFallSpeed = 600,
-    this.maxJumpTime = 0.4,
+    this.gravity = 650,
+    this.impulse = -250,
+    this.maxFallSpeed = 680,
+    this.maxJumpTime = 0.2,
   });
 
   void jump() {
@@ -24,6 +26,7 @@ class Physics {
       velocityY = impulse;
       isJumping = true;
       jumpTime = 0;
+      tiltDelayTimer = 0;
     }
   }
 
@@ -36,9 +39,30 @@ class Physics {
       }
     }
     velocityY += gravity * dt;
-    if (velocityY > maxFallSpeed) {
-      velocityY = maxFallSpeed;
-    }
+    velocityY = velocityY.clamp(-double.infinity, maxFallSpeed);
     position = position.translate(0, velocityY * dt);
+    getAngle(dt);
+  }
+
+  void getAngle(double dt) {
+    double maxTiltUp = -0.8;
+    double maxTiltDown = 1.3;
+    double tiltLerpSpeed = 4.0; // how fast it smooths between angles
+    double targetAngle;
+    if (isJumping) {
+      targetAngle = maxTiltUp;
+      tiltDelayTimer = 0;
+    } else {
+      if (tiltDelayTimer < 0.8) {
+        tiltDelayTimer += dt; // Increment the delay timer
+        targetAngle = maxTiltUp; // Keep the bird tilted upwards for now
+      } else {
+        targetAngle = (velocityY / maxFallSpeed) * maxTiltDown;
+        targetAngle = targetAngle.clamp(maxTiltUp, maxTiltDown);
+      }
+    }
+
+    // Smooth transition
+    angle = lerpDouble(angle, targetAngle, tiltLerpSpeed * dt)!;
   }
 }

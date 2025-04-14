@@ -1,10 +1,14 @@
 import 'package:flappy_dash_ce/core/game_object.dart';
 import 'package:flappy_dash_ce/core/game_painter.dart';
 import 'package:flappy_dash_ce/core/physics.dart';
-import 'package:flappy_dash_ce/core/sprite.dart';
+import 'package:flappy_dash_ce/game/floor.dart';
+import 'package:flappy_dash_ce/game/pipe.dart' as p;
+import 'package:flappy_dash_ce/game/pipe_generator.dart';
+import 'package:flappy_dash_ce/utils/sprite.dart';
 import 'package:flappy_dash_ce/game/dash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:logger/logger.dart';
 
 class Game extends StatefulWidget {
   const Game({super.key});
@@ -17,31 +21,103 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
   List<GameObject> gameObjects = [];
   late Ticker ticker;
   late Dash dash;
+  late p.Pipe upperPipe;
+  late p.Pipe lowerPipe;
+  late List<Floor> floors;
   double lastTime = 0.0;
+  int lastFrameTime = DateTime.now().millisecondsSinceEpoch;
+  double fps = 0.0;
+  double alpha = 55;
+  PipeGenerator? pipeGenerator;
+  var logger = Logger();
+  double timerToStart = 0;
+  bool isScreenTouched = false;
+
+  void getFPS() {
+    int currentFrameTime = DateTime.now().millisecondsSinceEpoch;
+    int deltaTime = currentFrameTime - lastFrameTime;
+    lastFrameTime = currentFrameTime;
+    if (deltaTime > 0) {
+      fps = (1000 / deltaTime);
+    }
+    //print('FPS: $fps');
+  }
 
   void _onTick(Duration elapsed) {
     final double dt = (elapsed.inMilliseconds - lastTime) / 1000;
+    timerToStart += dt;
     lastTime = elapsed.inMilliseconds.toDouble();
+    if (isScreenTouched && elapsed.inSeconds > 2) {
+      if (pipeGenerator != null) {
+        pipeGenerator!.generatePipes(dt);
+      }
+    }
+    gameObjects.removeWhere((obj) => obj.markedToDelete);
     for (final obj in gameObjects) {
       obj.update(dt);
     }
     setState(() {
       //
     });
+    //getFPS();|
   }
 
   @override
   void initState() {
-    loadSprite('assets/sprites/dash/dash_spritesheet.png').then((sprite) => {
-          dash = Dash(
-            spriteSheet: sprite,
-            size: const Size(64, 64),
-            physics: Physics(
-              position: const Offset(50, 100),
-            ),
+    pipeGenerator = PipeGenerator(isAlive: true, obj: gameObjects);
+    loadSprite('assets/sprites/dash/birdie.png').then(
+      (sprite) => {
+        dash = Dash(
+          spriteSheet: sprite,
+          size: const Size(56.8, 40),
+          physics: Physics(
+            position: const Offset(50, 400),
           ),
-          gameObjects.add(dash),
-        });
+        ),
+        gameObjects.add(dash),
+      },
+    );
+    loadSprite('assets/sprites/basic_pipe.png').then(
+      (sprite) => {
+        /*upperPipe = p.Pipe(
+          image: sprite,
+          size: const Size(85, 335),
+          position: const Offset(500, 0),
+        ),*/
+        pipeGenerator!.setUpperSprite(sprite)
+      },
+    );
+    loadSprite('assets/sprites/lower_pipe.png').then(
+      (sprite) => {
+        lowerPipe = p.Pipe(
+          image: sprite,
+          size: const Size(85, 280),
+          position: const Offset(300, 500),
+        ),
+        pipeGenerator!.setLowerSprite(sprite)
+      },
+    );
+    loadSprite('assets/sprites/base.png').then(
+      (sprite) => {
+        gameObjects.addAll([
+          Floor(
+            image: sprite,
+            size: const Size(301, 120),
+            position: const Offset(0, 750),
+          ),
+          Floor(
+            image: sprite,
+            size: const Size(301, 120),
+            position: const Offset(301, 750),
+          ),
+          Floor(
+            image: sprite,
+            size: const Size(301, 120),
+            position: const Offset(602, 750),
+          ),
+        ]),
+      },
+    );
     //loadSprite('assets/images/static_background').then((sprite) => {})
     ticker = createTicker(_onTick)..start();
     super.initState();
@@ -55,19 +131,26 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    //Size size = MediaQuery.of(context).size;
+    //print(size.toString());
     return SafeArea(
       child: GestureDetector(
         onTap: () {
-          dash.flap();
+          if (!isScreenTouched) {
+            isScreenTouched = true;
+            dash.isReadyToPlay = true;
+          } else {
+            dash.flap();
+          }
         },
         child: Container(
-          color: Colors.white,
-          /*decoration: const BoxDecoration(
+          //color: Colors.white,
+          decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/static_background.webp'),
+              image: AssetImage('assets/images/basic_background.png'),
               fit: BoxFit.cover,
             ),
-          ),*/
+          ),
           child: CustomPaint(
             painter: GamePainter(gameObjects: gameObjects),
             size: Size.infinite,

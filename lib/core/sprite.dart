@@ -1,10 +1,19 @@
-import 'dart:ui' as ui;
+import 'dart:ui';
 
-import 'package:flutter/services.dart';
+class Sprite {
+  final Image sprite;
+  final Size size;
+  final Offset position;
 
-Future<ui.Image> loadSprite(String path) async {
-  final data = await rootBundle.load(path);
-  final codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
-  final frame = await codec.getNextFrame();
-  return frame.image;
+  Sprite({
+    required this.sprite,
+    required this.size,
+    required this.position,
+  });
+
+  void render(Canvas canvas, Offset position, Size size) {
+    final dst = Rect.fromLTWH(position.dx, position.dy, size.width, size.height);
+    final src = Rect.fromLTWH(0, 0, sprite.width.toDouble(), sprite.height.toDouble());
+    canvas.drawImageRect(sprite, src, dst, Paint());
+  }
 }
