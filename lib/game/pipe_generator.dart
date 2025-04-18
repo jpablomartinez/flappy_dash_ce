@@ -34,8 +34,16 @@ class PipeGenerator {
     double lowerYSize = 750 - 140 - upperYSize;
     Size upperSize = Size(85, upperYSize);
     Size lowerSize = Size(85, lowerYSize);
-    Pipe upperPipe = Pipe(image: upperSprite!, size: upperSize, position: const Offset(430, 0));
-    Pipe lowerPipe = Pipe(image: lowerSprite!, size: lowerSize, position: Offset(430, upperYSize + 140));
+    Pipe upperPipe = Pipe(
+      upperSprite!,
+      const Offset(430, 0),
+      upperSize,
+    );
+    Pipe lowerPipe = Pipe(
+      lowerSprite!,
+      Offset(430, upperYSize + 140),
+      lowerSize,
+    );
     obj.addAll([upperPipe, lowerPipe]);
   }
 

@@ -1,6 +1,6 @@
+import 'package:flappy_dash_ce/core/box_collider.dart';
 import 'package:flappy_dash_ce/core/game_object.dart';
 import 'package:flappy_dash_ce/core/game_painter.dart';
-import 'package:flappy_dash_ce/core/physics.dart';
 import 'package:flappy_dash_ce/game/floor.dart';
 import 'package:flappy_dash_ce/game/pipe.dart' as p;
 import 'package:flappy_dash_ce/game/pipe_generator.dart';
@@ -43,6 +43,11 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
     //print('FPS: $fps');
   }
 
+  void gameOver() {
+    ticker.stop(); //this will stop all renders, i want to stops the pipes, floor and bird movement only
+    logger.d('GAME OVER');
+  }
+
   void _onTick(Duration elapsed) {
     final double dt = (elapsed.inMilliseconds - lastTime) / 1000;
     timerToStart += dt;
@@ -55,6 +60,15 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
     gameObjects.removeWhere((obj) => obj.markedToDelete);
     for (final obj in gameObjects) {
       obj.update(dt);
+      if (obj is Dash) {
+        final collisions = BoxCollider.getCollision(obj, gameObjects);
+        for (final other in collisions) {
+          if (other is p.Pipe || other is Floor) {
+            gameOver();
+            break;
+          }
+        }
+      }
     }
     setState(() {
       //
@@ -68,13 +82,12 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
     loadSprite('assets/sprites/dash/birdie.png').then(
       (sprite) => {
         dash = Dash(
-          spriteSheet: sprite,
-          size: const Size(56.8, 40),
-          physics: Physics(
-            position: const Offset(50, 400),
-          ),
+          sprite,
+          const Offset(50, 400),
+          const Size(56.8, 40),
         ),
         gameObjects.add(dash),
+        logger.d('Box Collider: ${dash.collider.toString()}')
       },
     );
     loadSprite('assets/sprites/basic_pipe.png').then(
@@ -90,9 +103,9 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
     loadSprite('assets/sprites/lower_pipe.png').then(
       (sprite) => {
         lowerPipe = p.Pipe(
-          image: sprite,
-          size: const Size(85, 280),
-          position: const Offset(300, 500),
+          sprite,
+          const Offset(300, 500),
+          const Size(85, 280),
         ),
         pipeGenerator!.setLowerSprite(sprite)
       },

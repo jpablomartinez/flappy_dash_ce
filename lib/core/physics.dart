@@ -1,7 +1,9 @@
 import 'dart:ui';
 
+import 'package:flappy_dash_ce/core/game_object.dart';
+
 class Physics {
-  Offset position;
+  final GameObject obj;
   final double gravity;
   final double impulse;
   final double maxFallSpeed;
@@ -14,7 +16,7 @@ class Physics {
   double tiltDelayTimer = 0;
 
   Physics({
-    required this.position,
+    required this.obj,
     this.gravity = 650,
     this.impulse = -250,
     this.maxFallSpeed = 680,
@@ -40,7 +42,7 @@ class Physics {
     }
     velocityY += gravity * dt;
     velocityY = velocityY.clamp(-double.infinity, maxFallSpeed);
-    position = position.translate(0, velocityY * dt);
+    obj.position = obj.position.translate(0, velocityY * dt);
     getAngle(dt);
   }
 

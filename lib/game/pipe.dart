@@ -3,19 +3,23 @@ import 'package:flappy_dash_ce/core/game_object.dart';
 import 'package:flappy_dash_ce/core/sprite.dart';
 
 class Pipe extends GameObject {
-  final Image image;
-  final Size size;
-  Offset position;
-
+  late Image image;
   late Sprite sprite;
 
-  Pipe({
-    required this.image,
-    required this.size,
-    required this.position,
-  }) {
-    sprite = Sprite(sprite: image, size: size, position: position);
+  Pipe(Image i, Offset pos, Size s) {
+    size = s;
+    position = pos;
+    image = i;
+    sprite = Sprite(sprite: image, size: s, position: pos);
   }
+
+  @override
+  Rect get collider => Rect.fromLTWH(
+        position.dx + 3,
+        position.dy + 4,
+        size.width - 2 * 4,
+        size.height - 2 * 4,
+      );
 
   @override
   void update(double deltaTime) {
