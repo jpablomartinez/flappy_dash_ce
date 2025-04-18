@@ -21,13 +21,10 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
   List<GameObject> gameObjects = [];
   late Ticker ticker;
   late Dash dash;
-  late p.Pipe upperPipe;
-  late p.Pipe lowerPipe;
   late List<Floor> floors;
   double lastTime = 0.0;
   int lastFrameTime = DateTime.now().millisecondsSinceEpoch;
   double fps = 0.0;
-  double alpha = 55;
   PipeGenerator? pipeGenerator;
   var logger = Logger();
   double timerToStart = 0;
@@ -40,7 +37,7 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
     if (deltaTime > 0) {
       fps = (1000 / deltaTime);
     }
-    //print('FPS: $fps');
+    logger.d('FPS: $fps');
   }
 
   void gameOver() {
@@ -91,47 +88,32 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
       },
     );
     loadSprite('assets/sprites/basic_pipe.png').then(
-      (sprite) => {
-        /*upperPipe = p.Pipe(
-          image: sprite,
-          size: const Size(85, 335),
-          position: const Offset(500, 0),
-        ),*/
-        pipeGenerator!.setUpperSprite(sprite)
-      },
+      (sprite) => {pipeGenerator!.setUpperSprite(sprite)},
     );
     loadSprite('assets/sprites/lower_pipe.png').then(
-      (sprite) => {
-        lowerPipe = p.Pipe(
-          sprite,
-          const Offset(300, 500),
-          const Size(85, 280),
-        ),
-        pipeGenerator!.setLowerSprite(sprite)
-      },
+      (sprite) => {pipeGenerator!.setLowerSprite(sprite)},
     );
     loadSprite('assets/sprites/base.png').then(
       (sprite) => {
         gameObjects.addAll([
           Floor(
-            image: sprite,
-            size: const Size(301, 120),
-            position: const Offset(0, 750),
+            sprite,
+            const Offset(0, 750),
+            const Size(301, 120),
           ),
           Floor(
-            image: sprite,
-            size: const Size(301, 120),
-            position: const Offset(301, 750),
+            sprite,
+            const Offset(301, 750),
+            const Size(301, 120),
           ),
           Floor(
-            image: sprite,
-            size: const Size(301, 120),
-            position: const Offset(602, 750),
+            sprite,
+            const Offset(602, 750),
+            const Size(301, 120),
           ),
         ]),
       },
     );
-    //loadSprite('assets/images/static_background').then((sprite) => {})
     ticker = createTicker(_onTick)..start();
     super.initState();
   }
@@ -145,7 +127,6 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     //Size size = MediaQuery.of(context).size;
-    //print(size.toString());
     return SafeArea(
       child: GestureDetector(
         onTap: () {

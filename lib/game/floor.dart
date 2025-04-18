@@ -4,17 +4,17 @@ import 'package:flappy_dash_ce/core/game_object.dart';
 import 'package:flappy_dash_ce/core/sprite.dart';
 
 class Floor extends GameObject {
-  final Image image;
-  final Size size;
-  Offset position;
-
+  late Image image;
   late Sprite sprite;
 
-  Floor({
-    required this.image,
-    required this.size,
-    required this.position,
-  }) {
+  Floor(
+    img,
+    pos,
+    s,
+  ) {
+    image = img;
+    position = pos;
+    size = s;
     sprite = Sprite(
       sprite: image,
       size: size,
