@@ -3,12 +3,15 @@ import 'package:flutter/rendering.dart';
 
 class GamePainter extends CustomPainter {
   final List<GameObject> gameObjects;
-
-  const GamePainter({required this.gameObjects});
+  final List<GameObject> ui;
+  const GamePainter({required this.gameObjects, required this.ui});
 
   @override
   void paint(Canvas canvas, Size size) {
     for (final gameObject in gameObjects) {
+      gameObject.render(canvas);
+    }
+    for (final gameObject in ui) {
       gameObject.render(canvas);
     }
   }

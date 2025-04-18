@@ -25,3 +25,7 @@ flutter:
         - assets/sprites/dash/
         - assets/sounds/
         - assets/images/
+    fonts:
+        - family: FlappyBirdy
+          fonts:
+              - asset: assets/fonts/flappybirdy/flappy-font.ttf

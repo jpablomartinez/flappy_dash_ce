@@ -1,1 +1,1 @@
-enum GameState { menu, playing, pause, gameOver }
+enum GameState { menu, start, playing, pause, gameOver }

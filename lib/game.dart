@@ -2,13 +2,16 @@ import 'package:flappy_dash_ce/core/box_collider.dart';
 import 'package:flappy_dash_ce/core/game_object.dart';
 import 'package:flappy_dash_ce/core/game_painter.dart';
 import 'package:flappy_dash_ce/game/floor.dart';
+import 'package:flappy_dash_ce/game/game_over_screen.dart';
 import 'package:flappy_dash_ce/game/pipe.dart' as p;
 import 'package:flappy_dash_ce/game/pipe_generator.dart';
+import 'package:flappy_dash_ce/game/points.dart';
 import 'package:flappy_dash_ce/utils/sprite.dart';
 import 'package:flappy_dash_ce/game/dash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:logger/logger.dart';
+import 'package:flappy_dash_ce/core/game_state.dart' as state;
 
 class Game extends StatefulWidget {
   const Game({super.key});
@@ -19,16 +22,20 @@ class Game extends StatefulWidget {
 
 class GameState extends State<Game> with SingleTickerProviderStateMixin {
   List<GameObject> gameObjects = [];
+  List<GameObject> ui = [];
   late Ticker ticker;
   late Dash dash;
   late List<Floor> floors;
+  late Points points;
   double lastTime = 0.0;
+  double flashBlackScreenTimer = 0;
   int lastFrameTime = DateTime.now().millisecondsSinceEpoch;
   double fps = 0.0;
   PipeGenerator? pipeGenerator;
   var logger = Logger();
   double timerToStart = 0;
   bool isScreenTouched = false;
+  state.GameState gameState = state.GameState.start;
 
   void getFPS() {
     int currentFrameTime = DateTime.now().millisecondsSinceEpoch;
@@ -41,7 +48,13 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
   }
 
   void gameOver() {
-    ticker.stop(); //this will stop all renders, i want to stops the pipes, floor and bird movement only
+    gameState = state.GameState.gameOver;
+    ui.add(
+      GameOverScreen(
+        const Size(430, 900),
+        const Offset(0, 0),
+      ),
+    );
     logger.d('GAME OVER');
   }
 
@@ -49,20 +62,26 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
     final double dt = (elapsed.inMilliseconds - lastTime) / 1000;
     timerToStart += dt;
     lastTime = elapsed.inMilliseconds.toDouble();
-    if (isScreenTouched && elapsed.inSeconds > 2) {
+    if (isScreenTouched && elapsed.inSeconds > 2 && gameState != state.GameState.gameOver) {
       if (pipeGenerator != null) {
         pipeGenerator!.generatePipes(dt);
       }
+      gameState = state.GameState.playing;
     }
     gameObjects.removeWhere((obj) => obj.markedToDelete);
-    for (final obj in gameObjects) {
+    for (final obj in ui) {
       obj.update(dt);
-      if (obj is Dash) {
-        final collisions = BoxCollider.getCollision(obj, gameObjects);
-        for (final other in collisions) {
-          if (other is p.Pipe || other is Floor) {
-            gameOver();
-            break;
+    }
+    if (gameState != state.GameState.gameOver) {
+      for (final obj in gameObjects) {
+        obj.update(dt);
+        if (obj is Dash) {
+          final collisions = BoxCollider.getCollision(obj, gameObjects);
+          for (final other in collisions) {
+            if (other is p.Pipe || other is Floor) {
+              gameOver();
+              break;
+            }
           }
         }
       }
@@ -70,23 +89,14 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
     setState(() {
       //
     });
-    //getFPS();|
+    //getFPS();
   }
 
   @override
   void initState() {
     pipeGenerator = PipeGenerator(isAlive: true, obj: gameObjects);
-    loadSprite('assets/sprites/dash/birdie.png').then(
-      (sprite) => {
-        dash = Dash(
-          sprite,
-          const Offset(50, 400),
-          const Size(56.8, 40),
-        ),
-        gameObjects.add(dash),
-        logger.d('Box Collider: ${dash.collider.toString()}')
-      },
-    );
+    points = Points(const Size(100, 100), const Offset(200, 70));
+    gameObjects.add(points);
     loadSprite('assets/sprites/basic_pipe.png').then(
       (sprite) => {pipeGenerator!.setUpperSprite(sprite)},
     );
@@ -114,6 +124,16 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
         ]),
       },
     );
+    loadSprite('assets/sprites/dash/birdie.png').then(
+      (sprite) => {
+        dash = Dash(
+          sprite,
+          const Offset(50, 400),
+          const Size(56.8, 40),
+        ),
+        gameObjects.add(dash),
+      },
+    );
     ticker = createTicker(_onTick)..start();
     super.initState();
   }
@@ -138,7 +158,6 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
           }
         },
         child: Container(
-          //color: Colors.white,
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage('assets/images/basic_background.png'),
@@ -146,7 +165,10 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
             ),
           ),
           child: CustomPaint(
-            painter: GamePainter(gameObjects: gameObjects),
+            painter: GamePainter(
+              gameObjects: gameObjects,
+              ui: ui,
+            ),
             size: Size.infinite,
           ),
         ),
