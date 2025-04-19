@@ -14,6 +14,7 @@ class PipeGenerator {
   List<GameObject> obj;
   ui.Image? upperSprite;
   ui.Image? lowerSprite;
+  final random = math.Random(DateTime.now().microsecondsSinceEpoch);
 
   PipeGenerator({
     required this.isAlive,
@@ -29,8 +30,7 @@ class PipeGenerator {
   }
 
   void generatePipe() {
-    final random = math.Random();
-    double upperYSize = random.nextInt(180) + 350;
+    double upperYSize = random.nextInt(300) + 50;
     double lowerYSize = 750 - 140 - upperYSize;
     Size upperSize = Size(85, upperYSize);
     Size lowerSize = Size(85, lowerYSize);
