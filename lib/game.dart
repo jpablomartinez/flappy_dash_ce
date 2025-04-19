@@ -49,7 +49,8 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
 
   void gameOver() {
     gameState = state.GameState.gameOver;
-    dash.gameState = gameState;
+    dash.setGameState(gameState);
+    points.setGameState(gameState);
     ui.add(
       GameOverScreen(
         const Size(430, 900),
@@ -69,7 +70,9 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
     }
     gameObjects.removeWhere((obj) => obj.markedToDelete);
     for (final obj in ui) {
-      obj.update(dt);
+      if (obj.shouldUpdate(gameState)) {
+        obj.update(dt);
+      }
     }
     for (final obj in gameObjects) {
       if (obj.shouldUpdate(gameState)) {

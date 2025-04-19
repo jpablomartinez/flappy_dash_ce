@@ -20,6 +20,10 @@ class Dash extends GameObject {
     start();
   }
 
+  void setGameState(GameState state) {
+    gameState = state;
+  }
+
   void start() {
     spriteAnimation = SpriteAnimation(
       spriteSheet: spriteSheet,

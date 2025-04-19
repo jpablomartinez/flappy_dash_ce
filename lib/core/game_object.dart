@@ -9,6 +9,7 @@ abstract class GameObject with Collider {
   void update(double deltaTime);
   void render(Canvas canvas);
   bool shouldUpdate(GameState state) => true;
+  bool shouldRender(GameState state) => true;
   void renderHitbox(Canvas canvas) {
     canvas.drawRect(
       collider,
