@@ -7,6 +7,8 @@ class Physics {
   final double gravity;
   final double impulse;
   final double maxFallSpeed;
+  final double yOffsetLowerLimit;
+  final double yOffsetUpperLimit;
 
   bool isJumping = false;
   double jumpTime = 0;
@@ -17,6 +19,8 @@ class Physics {
 
   Physics({
     required this.obj,
+    this.yOffsetLowerLimit = 700,
+    this.yOffsetUpperLimit = -10,
     this.gravity = 650,
     this.impulse = -250,
     this.maxFallSpeed = 680,
@@ -33,17 +37,21 @@ class Physics {
   }
 
   void update(double dt) {
-    if (isJumping) {
-      jumpTime += dt;
-      if (jumpTime > maxJumpTime) {
-        isJumping = false;
-        jumpTime = 0;
+    if (obj.position.dy <= yOffsetLowerLimit) {
+      if (isJumping) {
+        jumpTime += dt;
+        if (jumpTime > maxJumpTime) {
+          isJumping = false;
+          jumpTime = 0;
+        }
       }
+      velocityY += gravity * dt;
+      velocityY = velocityY.clamp(-double.infinity, maxFallSpeed);
+      //double yPosition = velocityY * dt;
+      //yPosition = yPosition.clamp(yOffsetLowerLimit, yOffsetUpperLimit);
+      obj.position = obj.position.translate(0, velocityY * dt);
+      getAngle(dt);
     }
-    velocityY += gravity * dt;
-    velocityY = velocityY.clamp(-double.infinity, maxFallSpeed);
-    obj.position = obj.position.translate(0, velocityY * dt);
-    getAngle(dt);
   }
 
   void getAngle(double dt) {

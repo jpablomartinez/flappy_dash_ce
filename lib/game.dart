@@ -49,39 +49,38 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
 
   void gameOver() {
     gameState = state.GameState.gameOver;
+    dash.gameState = gameState;
     ui.add(
       GameOverScreen(
         const Size(430, 900),
         const Offset(0, 0),
       ),
     );
-    logger.d('GAME OVER');
   }
 
   void _onTick(Duration elapsed) {
     final double dt = (elapsed.inMilliseconds - lastTime) / 1000;
     timerToStart += dt;
     lastTime = elapsed.inMilliseconds.toDouble();
-    if (isScreenTouched && elapsed.inSeconds > 2 && gameState != state.GameState.gameOver) {
+    if (isScreenTouched && elapsed.inMilliseconds > 1500 && gameState != state.GameState.gameOver) {
       if (pipeGenerator != null) {
         pipeGenerator!.generatePipes(dt);
       }
-      gameState = state.GameState.playing;
     }
     gameObjects.removeWhere((obj) => obj.markedToDelete);
     for (final obj in ui) {
       obj.update(dt);
     }
-    if (gameState != state.GameState.gameOver) {
-      for (final obj in gameObjects) {
+    for (final obj in gameObjects) {
+      if (obj.shouldUpdate(gameState)) {
         obj.update(dt);
-        if (obj is Dash) {
-          final collisions = BoxCollider.getCollision(obj, gameObjects);
-          for (final other in collisions) {
-            if (other is p.Pipe || other is Floor) {
-              gameOver();
-              break;
-            }
+      }
+      if (obj is Dash && gameState == state.GameState.playing) {
+        final collisions = BoxCollider.getCollision(obj, gameObjects);
+        for (final other in collisions) {
+          if (other is p.Pipe || other is Floor) {
+            gameOver();
+            break;
           }
         }
       }
@@ -96,7 +95,7 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
   void initState() {
     pipeGenerator = PipeGenerator(isAlive: true, obj: gameObjects);
     points = Points(const Size(100, 100), const Offset(200, 70));
-    gameObjects.add(points);
+    ui.add(points);
     loadSprite('assets/sprites/basic_pipe.png').then(
       (sprite) => {pipeGenerator!.setUpperSprite(sprite)},
     );
@@ -130,6 +129,7 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
           sprite,
           const Offset(50, 400),
           const Size(56.8, 40),
+          gameState,
         ),
         gameObjects.add(dash),
       },
@@ -151,8 +151,10 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
       child: GestureDetector(
         onTap: () {
           if (!isScreenTouched) {
+            gameState = state.GameState.playing;
             isScreenTouched = true;
             dash.isReadyToPlay = true;
+            dash.flap();
           } else {
             dash.flap();
           }

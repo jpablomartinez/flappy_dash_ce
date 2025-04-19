@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flappy_dash_ce/core/game_object.dart';
+import 'package:flappy_dash_ce/core/game_state.dart';
 import 'package:flappy_dash_ce/core/sprite.dart';
 
 class Floor extends GameObject {
@@ -21,6 +22,9 @@ class Floor extends GameObject {
       position: position,
     );
   }
+
+  @override
+  bool shouldUpdate(GameState state) => state != GameState.gameOver;
 
   @override
   void render(Canvas canvas) {

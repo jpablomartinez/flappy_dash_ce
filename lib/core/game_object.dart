@@ -1,4 +1,5 @@
 import 'package:flappy_dash_ce/core/collider.dart';
+import 'package:flappy_dash_ce/core/game_state.dart';
 import 'package:flutter/material.dart';
 
 abstract class GameObject with Collider {
@@ -7,6 +8,7 @@ abstract class GameObject with Collider {
   Size size = const Size(0, 0);
   void update(double deltaTime);
   void render(Canvas canvas);
+  bool shouldUpdate(GameState state) => true;
   void renderHitbox(Canvas canvas) {
     canvas.drawRect(
       collider,

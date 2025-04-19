@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flappy_dash_ce/core/game_object.dart';
+import 'package:flappy_dash_ce/core/game_state.dart';
 import 'package:flappy_dash_ce/core/sprite.dart';
 
 class Pipe extends GameObject {
@@ -20,6 +21,9 @@ class Pipe extends GameObject {
         size.width - 2 * 4,
         size.height - 2 * 4,
       );
+
+  @override
+  bool shouldUpdate(GameState state) => state == GameState.playing;
 
   @override
   void update(double deltaTime) {

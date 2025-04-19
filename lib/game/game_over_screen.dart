@@ -12,7 +12,7 @@ class GameOverScreen extends GameObject {
 
   @override
   void render(Canvas canvas) {
-    if (flash < 0.1) {
+    if (flash < 0.180) {
       canvas.drawRect(
         const Rect.fromLTWH(0, 0, 430, 920),
         Paint()
