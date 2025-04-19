@@ -6,6 +6,8 @@ import 'package:flappy_dash_ce/game/game_over_screen.dart';
 import 'package:flappy_dash_ce/game/pipe.dart' as p;
 import 'package:flappy_dash_ce/game/pipe_generator.dart';
 import 'package:flappy_dash_ce/game/points.dart';
+import 'package:flappy_dash_ce/ui/button.dart';
+import 'package:flappy_dash_ce/utils/constants.dart';
 import 'package:flappy_dash_ce/utils/sprite.dart';
 import 'package:flappy_dash_ce/game/dash.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +38,7 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
   double timerToStart = 0;
   bool isScreenTouched = false;
   state.GameState gameState = state.GameState.start;
+  late Button restartButton;
 
   void getFPS() {
     int currentFrameTime = DateTime.now().millisecondsSinceEpoch;
@@ -70,7 +73,8 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
     }
     gameObjects.removeWhere((obj) => obj.markedToDelete);
     for (final obj in ui) {
-      if (obj.shouldUpdate(gameState)) {
+      //logger.d(obj.shouldRender(gameState) && obj.runtimeType == Button);
+      if (obj.shouldUpdate(gameState) || obj.shouldRender(gameState)) {
         obj.update(dt);
       }
     }
@@ -98,7 +102,18 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
   void initState() {
     pipeGenerator = PipeGenerator(isAlive: true, obj: gameObjects);
     points = Points(const Size(100, 100), const Offset(200, 70));
+    points.setGameState(gameState);
+    restartButton = Button(
+      parentSize: const Size(150, 200),
+      label: 'Restart',
+      onTap: () {
+        print('touch');
+      },
+      rect: const Rect.fromLTWH(((430 - 150) / 2) + 5, 200 + initialTop + 50 + 55, 144, 42),
+    );
+
     ui.add(points);
+    ui.add(restartButton);
     loadSprite('assets/sprites/basic_pipe.png').then(
       (sprite) => {pipeGenerator!.setUpperSprite(sprite)},
     );
@@ -150,7 +165,7 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     //Size size = MediaQuery.of(context).size;
-    return SafeArea(
+    /*return SafeArea(
       child: GestureDetector(
         onTap: () {
           if (!isScreenTouched) {
@@ -178,6 +193,47 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
           ),
         ),
       ),
-    );
+    );*/
+    return SafeArea(
+        child: Listener(
+      behavior: HitTestBehavior.opaque,
+      onPointerDown: (event) {
+        final localPosition = event.localPosition;
+        // Handle button taps
+        /*for (final button in ui) {
+          if (button. (localPosition)) {
+            button.onTap();
+            return; // Stop propagation if UI button was tapped
+          }
+        }*/
+
+        // Handle game tap (e.g., make the bird flap)
+        if (gameState != state.GameState.gameOver) {
+          if (!isScreenTouched) {
+            gameState = state.GameState.playing;
+            isScreenTouched = true;
+            dash.isReadyToPlay = true;
+            dash.flap();
+          } else {
+            dash.flap();
+          }
+        }
+      },
+      child: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/basic_background.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: CustomPaint(
+          painter: GamePainter(
+            gameObjects: gameObjects,
+            ui: ui,
+          ),
+          size: Size.infinite,
+        ),
+      ),
+    ));
   }
 }

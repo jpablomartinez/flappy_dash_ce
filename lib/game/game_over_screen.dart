@@ -103,7 +103,7 @@ class GameOverScreen extends GameObject {
       );
     } else {
       renderScoreboard(canvas);
-      renderButton(canvas, 'Restart');
+      //renderButton(canvas, 'Restart');
     }
   }
 
