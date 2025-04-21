@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flappy_dash_ce/core/game_state.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:flappy_dash_ce/core/game_object.dart';
 import 'dart:math';
@@ -18,6 +19,18 @@ class GameOverScreen extends GameObject {
     size = s;
     position = pos;
   }
+
+  void initialConfiguration() {
+    flash = 0;
+    scoreBoardTime = 0;
+    initialTop = 140;
+  }
+
+  @override
+  bool shouldRender(GameState state) => state == GameState.gameOver;
+
+  @override
+  bool shouldUpdate(GameState state) => state == GameState.gameOver;
 
   void renderScoreboard(Canvas canvas) {
     final double left = leftCenter(430, 150);

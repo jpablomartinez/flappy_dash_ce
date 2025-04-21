@@ -1,10 +1,16 @@
 import 'package:flappy_dash_ce/core/game_object.dart';
+import 'package:flappy_dash_ce/core/game_state.dart';
 import 'package:flutter/rendering.dart';
 
 class GamePainter extends CustomPainter {
   final List<GameObject> gameObjects;
   final List<GameObject> ui;
-  const GamePainter({required this.gameObjects, required this.ui});
+  final GameState gameState;
+  const GamePainter({
+    required this.gameObjects,
+    required this.ui,
+    required this.gameState,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -12,7 +18,9 @@ class GamePainter extends CustomPainter {
       gameObject.render(canvas);
     }
     for (final gameObject in ui) {
-      gameObject.render(canvas);
+      if (gameObject.shouldRender(gameState) || gameObject.shouldUpdate(gameState)) {
+        gameObject.render(canvas);
+      }
     }
   }
 

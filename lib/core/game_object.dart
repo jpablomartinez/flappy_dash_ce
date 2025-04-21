@@ -8,8 +8,10 @@ abstract class GameObject with Collider {
   Size size = const Size(0, 0);
   void update(double deltaTime);
   void render(Canvas canvas);
+  VoidCallback callback = () {};
   bool shouldUpdate(GameState state) => true;
   bool shouldRender(GameState state) => true;
+  bool checkTap(Offset tapPositon, Rect rect) => rect.contains(tapPositon);
   void renderHitbox(Canvas canvas) {
     canvas.drawRect(
       collider,

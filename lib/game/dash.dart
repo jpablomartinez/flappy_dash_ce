@@ -20,6 +20,10 @@ class Dash extends GameObject {
     start();
   }
 
+  void setPosition(Offset pos) {
+    position = pos;
+  }
+
   void setGameState(GameState state) {
     gameState = state;
   }
@@ -36,6 +40,10 @@ class Dash extends GameObject {
 
   void flap() {
     physics.jump();
+  }
+
+  void awake() {
+    physics.angle = 0;
   }
 
   @override

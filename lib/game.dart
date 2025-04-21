@@ -39,6 +39,7 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
   bool isScreenTouched = false;
   state.GameState gameState = state.GameState.start;
   late Button restartButton;
+  final initialPos = const Offset(50, 400);
 
   void getFPS() {
     int currentFrameTime = DateTime.now().millisecondsSinceEpoch;
@@ -54,12 +55,29 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
     gameState = state.GameState.gameOver;
     dash.setGameState(gameState);
     points.setGameState(gameState);
-    ui.add(
-      GameOverScreen(
-        const Size(430, 900),
-        const Offset(0, 0),
-      ),
-    );
+  }
+
+  void restart() {
+    if (gameState == state.GameState.gameOver) {
+      gameState = state.GameState.start;
+      dash.setPosition(initialPos);
+      dash.awake();
+      points.record = 0;
+      points.setGameState(gameState);
+      isScreenTouched = false;
+      dash.isReadyToPlay = false;
+      timerToStart = 0;
+      pipeGenerator!.clearPipes();
+      for (final uiElement in ui) {
+        //TODO: IMPROVE THIS. initialConfiguration method have to be a abstract method
+        if (uiElement is GameOverScreen) {
+          uiElement.initialConfiguration();
+        }
+        if (uiElement is Button) {
+          uiElement.initialConfiguration();
+        }
+      }
+    }
   }
 
   void _onTick(Duration elapsed) {
@@ -73,7 +91,6 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
     }
     gameObjects.removeWhere((obj) => obj.markedToDelete);
     for (final obj in ui) {
-      //logger.d(obj.shouldRender(gameState) && obj.runtimeType == Button);
       if (obj.shouldUpdate(gameState) || obj.shouldRender(gameState)) {
         obj.update(dt);
       }
@@ -107,11 +124,16 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
       parentSize: const Size(150, 200),
       label: 'Restart',
       onTap: () {
-        print('touch');
+        restart();
       },
-      rect: const Rect.fromLTWH(((430 - 150) / 2) + 5, 200 + initialTop + 50 + 55, 144, 42),
+      rect: const Rect.fromLTWH(((430 - 150) / 2) + 5, 115 + initialTop, 144, 42),
     );
-
+    ui.add(
+      GameOverScreen(
+        const Size(430, 900),
+        const Offset(0, 0),
+      ),
+    );
     ui.add(points);
     ui.add(restartButton);
     loadSprite('assets/sprites/basic_pipe.png').then(
@@ -164,50 +186,11 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    //Size size = MediaQuery.of(context).size;
-    /*return SafeArea(
-      child: GestureDetector(
-        onTap: () {
-          if (!isScreenTouched) {
-            gameState = state.GameState.playing;
-            isScreenTouched = true;
-            dash.isReadyToPlay = true;
-            dash.flap();
-          } else {
-            dash.flap();
-          }
-        },
-        child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/basic_background.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: CustomPaint(
-            painter: GamePainter(
-              gameObjects: gameObjects,
-              ui: ui,
-            ),
-            size: Size.infinite,
-          ),
-        ),
-      ),
-    );*/
     return SafeArea(
         child: Listener(
       behavior: HitTestBehavior.opaque,
       onPointerDown: (event) {
         final localPosition = event.localPosition;
-        // Handle button taps
-        /*for (final button in ui) {
-          if (button. (localPosition)) {
-            button.onTap();
-            return; // Stop propagation if UI button was tapped
-          }
-        }*/
-
-        // Handle game tap (e.g., make the bird flap)
         if (gameState != state.GameState.gameOver) {
           if (!isScreenTouched) {
             gameState = state.GameState.playing;
@@ -216,6 +199,13 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
             dash.flap();
           } else {
             dash.flap();
+          }
+        }
+        for (final uiElement in ui) {
+          if (uiElement is Button) {
+            if (uiElement.checkOnTap(localPosition)) {
+              uiElement.onTap();
+            }
           }
         }
       },
@@ -230,6 +220,7 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
           painter: GamePainter(
             gameObjects: gameObjects,
             ui: ui,
+            gameState: gameState,
           ),
           size: Size.infinite,
         ),

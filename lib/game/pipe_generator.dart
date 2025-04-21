@@ -54,4 +54,13 @@ class PipeGenerator {
       elapsedTime = 0;
     }
   }
+
+  void clearPipes() {
+    for (final o in obj) {
+      if (o is Pipe) {
+        o.markedToDelete = true;
+      }
+    }
+    obj.removeWhere((o) => o.markedToDelete);
+  }
 }
