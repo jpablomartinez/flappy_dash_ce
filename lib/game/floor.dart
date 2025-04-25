@@ -38,4 +38,7 @@ class Floor extends GameObject {
       position = position.translate(903, 0);
     }
   }
+
+  @override
+  void awake() {}
 }

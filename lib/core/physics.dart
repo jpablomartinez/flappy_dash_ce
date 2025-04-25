@@ -27,6 +27,10 @@ class Physics {
     this.maxJumpTime = 0.2,
   });
 
+  void reset() {
+    angle = 0;
+  }
+
   void jump() {
     if (!isJumping) {
       velocityY = impulse;

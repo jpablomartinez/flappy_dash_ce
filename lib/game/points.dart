@@ -24,10 +24,6 @@ class Points extends GameObject {
     bestScore = v;
   }
 
-  void reset() {
-    record = 0;
-  }
-
   @override
   bool shouldUpdate(GameState state) => state != GameState.gameOver;
 
@@ -47,4 +43,10 @@ class Points extends GameObject {
 
   @override
   void update(double deltaTime) {}
+
+  @override
+  void awake() {
+    record = 0;
+    state = GameState.start;
+  }
 }

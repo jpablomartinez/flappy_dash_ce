@@ -37,4 +37,7 @@ class Pipe extends GameObject {
   void render(Canvas canvas) {
     sprite.render(canvas, position, size);
   }
+
+  @override
+  void awake() {}
 }

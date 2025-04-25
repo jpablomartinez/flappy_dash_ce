@@ -8,6 +8,7 @@ abstract class GameObject with Collider {
   Size size = const Size(0, 0);
   void update(double deltaTime);
   void render(Canvas canvas);
+  void awake();
   VoidCallback callback = () {};
   bool shouldUpdate(GameState state) => true;
   bool shouldRender(GameState state) => true;

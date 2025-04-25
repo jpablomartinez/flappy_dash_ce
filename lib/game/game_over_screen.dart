@@ -20,7 +20,8 @@ class GameOverScreen extends GameObject {
     position = pos;
   }
 
-  void initialConfiguration() {
+  @override
+  void awake() {
     flash = 0;
     scoreBoardTime = 0;
     initialTop = 140;

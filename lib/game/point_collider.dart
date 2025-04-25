@@ -37,4 +37,7 @@ class PointCollider extends GameObject {
       markedToDelete = true;
     }
   }
+
+  @override
+  void awake() {}
 }

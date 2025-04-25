@@ -9,10 +9,12 @@ class Dash extends GameObject {
   late SpriteAnimation spriteAnimation;
   late Physics physics;
   late GameState gameState;
+  late Offset initial;
   bool isReadyToPlay = false;
 
   Dash(Image sprite, Offset pos, Size s, GameState state) {
     position = pos;
+    initial = pos;
     physics = Physics(obj: this);
     size = s;
     spriteSheet = sprite;
@@ -42,8 +44,12 @@ class Dash extends GameObject {
     physics.jump();
   }
 
+  @override
   void awake() {
-    physics.angle = 0;
+    position = initial;
+    gameState = GameState.start;
+    isReadyToPlay = false;
+    physics.reset();
   }
 
   @override

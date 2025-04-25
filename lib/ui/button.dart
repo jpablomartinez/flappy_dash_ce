@@ -24,7 +24,8 @@ class Button extends GameObject {
     innerRect = Rect.fromLTWH(rect.left, rect.top + top, rect.width, rect.height);
   }
 
-  void initialConfiguration() {
+  @override
+  void awake() {
     animationTime = 0;
     top = initialTop;
     innerRect = Rect.fromLTWH(rect.left, rect.top + top, rect.width, rect.height);
