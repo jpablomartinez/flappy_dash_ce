@@ -27,7 +27,7 @@ class PointCollider extends GameObject {
 
   @override
   void render(Canvas canvas) {
-    renderHitbox(canvas);
+    //renderHitbox(canvas);
   }
 
   @override
