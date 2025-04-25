@@ -1,5 +1,6 @@
 import 'package:flappy_dash_ce/core/game_object.dart';
 import 'package:flappy_dash_ce/game/pipe.dart';
+import 'package:flappy_dash_ce/game/point_collider.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
@@ -44,7 +45,8 @@ class PipeGenerator {
       Offset(430, upperYSize + 140),
       lowerSize,
     );
-    obj.addAll([upperPipe, lowerPipe]);
+    PointCollider pc = PointCollider(Offset(430, upperYSize), const Size(85, 140));
+    obj.addAll([upperPipe, pc, lowerPipe]);
   }
 
   void generatePipes(double dt) {
@@ -57,7 +59,7 @@ class PipeGenerator {
 
   void clearPipes() {
     for (final o in obj) {
-      if (o is Pipe) {
+      if (o is Pipe || o is PointCollider) {
         o.markedToDelete = true;
       }
     }

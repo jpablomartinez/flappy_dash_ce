@@ -4,6 +4,7 @@ import 'package:flappy_dash_ce/core/game_state.dart';
 
 class Points extends GameObject {
   int record = 0;
+  int bestScore = 0;
   late GameState state;
 
   Points(Size s, Offset pos) {
@@ -17,6 +18,14 @@ class Points extends GameObject {
 
   void addPoint(int v) {
     record += v;
+  }
+
+  void setBestScore(int v) {
+    bestScore = v;
+  }
+
+  void reset() {
+    record = 0;
   }
 
   @override

@@ -1,10 +1,12 @@
 import 'package:flappy_dash_ce/core/box_collider.dart';
 import 'package:flappy_dash_ce/core/game_object.dart';
 import 'package:flappy_dash_ce/core/game_painter.dart';
+import 'package:flappy_dash_ce/db/shared_preferences.dart';
 import 'package:flappy_dash_ce/game/floor.dart';
 import 'package:flappy_dash_ce/game/game_over_screen.dart';
 import 'package:flappy_dash_ce/game/pipe.dart' as p;
 import 'package:flappy_dash_ce/game/pipe_generator.dart';
+import 'package:flappy_dash_ce/game/point_collider.dart';
 import 'package:flappy_dash_ce/game/points.dart';
 import 'package:flappy_dash_ce/ui/button.dart';
 import 'package:flappy_dash_ce/utils/constants.dart';
@@ -40,6 +42,70 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
   state.GameState gameState = state.GameState.start;
   late Button restartButton;
   final initialPos = const Offset(50, 400);
+  GameOverScreen gameOverScreen = GameOverScreen(
+    const Size(430, 900),
+    const Offset(0, 0),
+  );
+  SharedPreferences sharedPreferences = SharedPreferences();
+
+  Future<void> init() async {
+    pipeGenerator = PipeGenerator(isAlive: true, obj: gameObjects);
+    points = Points(const Size(100, 100), const Offset(200, 70));
+    points.setGameState(gameState);
+    int bestScore = await sharedPreferences.load('bestScore') as int;
+    points.setBestScore(bestScore);
+    gameOverScreen.bestScore = bestScore;
+    restartButton = Button(
+      parentSize: const Size(150, 200),
+      label: 'Restart',
+      onTap: () {
+        restart();
+      },
+      rect: const Rect.fromLTWH(((430 - 150) / 2) + 5, 115 + initialTop, 144, 42),
+    );
+    ui.add(gameOverScreen);
+    ui.add(points);
+    ui.add(restartButton);
+    loadSprite('assets/sprites/basic_pipe.png').then(
+      (sprite) => {pipeGenerator!.setUpperSprite(sprite)},
+    );
+    loadSprite('assets/sprites/lower_pipe.png').then(
+      (sprite) => {pipeGenerator!.setLowerSprite(sprite)},
+    );
+    loadSprite('assets/sprites/base.png').then(
+      (sprite) => {
+        gameObjects.addAll([
+          Floor(
+            sprite,
+            const Offset(0, 750),
+            const Size(301, 120),
+          ),
+          Floor(
+            sprite,
+            const Offset(301, 750),
+            const Size(301, 120),
+          ),
+          Floor(
+            sprite,
+            const Offset(602, 750),
+            const Size(301, 120),
+          ),
+        ]),
+      },
+    );
+    loadSprite('assets/sprites/dash/birdie.png').then(
+      (sprite) => {
+        dash = Dash(
+          sprite,
+          const Offset(50, 400),
+          const Size(56.8, 40),
+          gameState,
+        ),
+        gameObjects.add(dash),
+      },
+    );
+    ticker = createTicker(_onTick)..start();
+  }
 
   void getFPS() {
     int currentFrameTime = DateTime.now().millisecondsSinceEpoch;
@@ -52,6 +118,11 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
   }
 
   void gameOver() {
+    gameOverScreen.score = points.record;
+    if (points.bestScore < points.record) {
+      gameOverScreen.bestScore = points.record;
+      sharedPreferences.update('bestScore', points.record).then((v) => () {});
+    }
     gameState = state.GameState.gameOver;
     dash.setGameState(gameState);
     points.setGameState(gameState);
@@ -62,6 +133,7 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
       gameState = state.GameState.start;
       dash.setPosition(initialPos);
       dash.awake();
+      dash.setGameState(gameState);
       points.record = 0;
       points.setGameState(gameState);
       isScreenTouched = false;
@@ -106,6 +178,10 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
             gameOver();
             break;
           }
+          if (other is PointCollider && !other.touched) {
+            other.touched = true;
+            points.record++;
+          }
         }
       }
     }
@@ -117,64 +193,7 @@ class GameState extends State<Game> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    pipeGenerator = PipeGenerator(isAlive: true, obj: gameObjects);
-    points = Points(const Size(100, 100), const Offset(200, 70));
-    points.setGameState(gameState);
-    restartButton = Button(
-      parentSize: const Size(150, 200),
-      label: 'Restart',
-      onTap: () {
-        restart();
-      },
-      rect: const Rect.fromLTWH(((430 - 150) / 2) + 5, 115 + initialTop, 144, 42),
-    );
-    ui.add(
-      GameOverScreen(
-        const Size(430, 900),
-        const Offset(0, 0),
-      ),
-    );
-    ui.add(points);
-    ui.add(restartButton);
-    loadSprite('assets/sprites/basic_pipe.png').then(
-      (sprite) => {pipeGenerator!.setUpperSprite(sprite)},
-    );
-    loadSprite('assets/sprites/lower_pipe.png').then(
-      (sprite) => {pipeGenerator!.setLowerSprite(sprite)},
-    );
-    loadSprite('assets/sprites/base.png').then(
-      (sprite) => {
-        gameObjects.addAll([
-          Floor(
-            sprite,
-            const Offset(0, 750),
-            const Size(301, 120),
-          ),
-          Floor(
-            sprite,
-            const Offset(301, 750),
-            const Size(301, 120),
-          ),
-          Floor(
-            sprite,
-            const Offset(602, 750),
-            const Size(301, 120),
-          ),
-        ]),
-      },
-    );
-    loadSprite('assets/sprites/dash/birdie.png').then(
-      (sprite) => {
-        dash = Dash(
-          sprite,
-          const Offset(50, 400),
-          const Size(56.8, 40),
-          gameState,
-        ),
-        gameObjects.add(dash),
-      },
-    );
-    ticker = createTicker(_onTick)..start();
+    init();
     super.initState();
   }
 
