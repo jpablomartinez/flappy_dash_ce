@@ -19,3 +19,8 @@ This project is built with **Flutter**, ensuring versatility and compatibility w
     ```bash
     flutter run
     ```
+
+### Disclaimers
+
+This is my second intent to create my own game engine only for fun. I added a Loader View only to
+learn how to load assets and separation of concerns. That's why i add a delayed in assets manager

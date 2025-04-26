@@ -2,7 +2,6 @@ import 'package:flappy_dash_ce/core/game_painter.dart';
 import 'package:flappy_dash_ce/game/game_controller.dart';
 import 'package:flappy_dash_ce/ui/button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 class GameView extends StatefulWidget {
   const GameView({super.key});
@@ -11,26 +10,20 @@ class GameView extends StatefulWidget {
   GameViewState createState() => GameViewState();
 }
 
-class GameViewState extends State<GameView> with SingleTickerProviderStateMixin {
-  late Ticker ticker;
+class GameViewState extends State<GameView> {
   late GameController gameController;
-
-  void _onTick(Duration elapsed) {
-    gameController.onTick(elapsed);
-    setState(() {});
-  }
 
   @override
   void initState() {
-    gameController = GameController(show: true);
+    gameController = GameController(show: false);
     gameController.init();
-    ticker = createTicker(_onTick)..start();
+    gameController.onTick = () => setState(() {});
+    gameController.run();
     super.initState();
   }
 
   @override
   void dispose() {
-    ticker.dispose();
     super.dispose();
   }
 

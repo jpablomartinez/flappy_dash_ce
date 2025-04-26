@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'package:flappy_dash_ce/core/asset_manager.dart';
+import 'package:flappy_dash_ce/core/base_game_loop.dart';
 import 'package:flappy_dash_ce/db/shared_preferences.dart';
 import 'package:flappy_dash_ce/game/game_over_screen.dart';
 import 'package:flappy_dash_ce/utils/constants.dart';
@@ -13,7 +15,6 @@ import 'package:flappy_dash_ce/game/pipe_generator.dart';
 import 'package:flappy_dash_ce/game/point_collider.dart';
 import 'package:flappy_dash_ce/game/points.dart';
 import 'package:flappy_dash_ce/ui/button.dart';
-import 'package:flappy_dash_ce/utils/sprite.dart';
 import 'package:logger/logger.dart';
 
 /// The GameController class manages the main game logic and state for the Flappy Dash game.
@@ -22,7 +23,7 @@ import 'package:logger/logger.dart';
 /// including rendering and updating game objects and UI elements. The class also manages
 /// game states such as starting, playing, and game over, and provides methods to restart
 /// the game and calculate frames per second (FPS).
-class GameController extends Game {
+class GameController extends BaseGameLoop implements Game {
   late double fps;
   late int lastFrameTime;
   late bool showFPS;
@@ -40,6 +41,7 @@ class GameController extends Game {
   late Offset initialPos;
   late GameOverScreen gameOverScreen;
   late SharedPreferences sharedPreferences;
+  late AssetManager assetManager;
 
   var logger = Logger();
 
@@ -59,6 +61,7 @@ class GameController extends Game {
       const Offset(0, 0),
     );
     sharedPreferences = SharedPreferences();
+    assetManager = AssetManager();
   }
 
   /// Loads game assets asynchronously and initializes game objects and UI elements.
@@ -87,48 +90,35 @@ class GameController extends Game {
       rect: const Rect.fromLTWH(((430 - 150) / 2) + 5, 115 + initialTop, 144, 42),
     );
     // ***********
-
-    loadSprite('assets/sprites/basic_pipe.png').then(
-      (sprite) => {pipeGenerator!.setUpperSprite(sprite)},
-    );
-    loadSprite('assets/sprites/lower_pipe.png').then(
-      (sprite) => {pipeGenerator!.setLowerSprite(sprite)},
-    );
-    loadSprite('assets/sprites/base.png').then(
-      (sprite) => {
-        gameObjects.addAll([
-          Floor(
-            sprite,
-            const Offset(0, 750),
-            const Size(301, 120),
-          ),
-          Floor(
-            sprite,
-            const Offset(301, 750),
-            const Size(301, 120),
-          ),
-          Floor(
-            sprite,
-            const Offset(602, 750),
-            const Size(301, 120),
-          ),
-        ]),
-      },
-    );
-    loadSprite('assets/sprites/dash/birdie.png').then(
-      (sprite) => {
-        dash = Dash(
-          sprite,
-          const Offset(50, 400),
-          const Size(56.8, 40),
-          gameState,
-        ),
-        gameObjects.add(dash),
-      },
-    );
     ui.add(gameOverScreen);
     ui.add(points);
     ui.add(restartButton);
+
+    pipeGenerator!.setUpperSprite(assetManager.upperPipe);
+    pipeGenerator!.setLowerSprite(assetManager.lowerPipe);
+    gameObjects.addAll([
+      Floor(
+        assetManager.floor,
+        const Offset(0, 750),
+        const Size(301, 120),
+      ),
+      Floor(
+        assetManager.floor,
+        const Offset(301, 750),
+        const Size(301, 120),
+      ),
+      Floor(
+        assetManager.floor,
+        const Offset(602, 750),
+        const Size(301, 120),
+      ),
+      dash = Dash(
+        assetManager.dashSprite,
+        const Offset(50, 400),
+        const Size(56.8, 40),
+        gameState,
+      ),
+    ]);
   }
 
   /// Initializes the game controller by loading assets and setting up the game state.
@@ -160,9 +150,9 @@ class GameController extends Game {
   /// Also manages the removal of game objects and rendering of the UI and game objects.
   ///
   /// @param elapsedTime The duration since the game started.
-  @override
-  void onTick(Duration elapsedTime) {
-    final double dt = (elapsedTime.inMilliseconds - lastTime) / 1000;
+  //@override
+  void onTick2(Duration elapsedTime) {
+    /*  final double dt = (elapsedTime.inMilliseconds - lastTime) / 1000;
     timerToStart += dt;
     lastTime = elapsedTime.inMilliseconds.toDouble();
 
@@ -174,11 +164,11 @@ class GameController extends Game {
     }
 
     removeObjects();
-    renderUI(dt);
-    renderGameObjects(dt);
+    updateUI(dt);
+    updateGameObjects(dt);
     if (showFPS) {
       getFPS();
-    }
+    }*/
   }
 
   /// Handles the game over logic by updating the score and best score.
@@ -226,7 +216,7 @@ class GameController extends Game {
   /// - Parameter deltaTime: The time elapsed since the last frame, used
   ///   for updating game object states.
   @override
-  void renderGameObjects(double deltaTime) {
+  void updateGameObjects(double deltaTime) {
     for (final obj in gameObjects) {
       if (obj.shouldUpdate(gameState)) {
         obj.update(deltaTime);
@@ -255,7 +245,7 @@ class GameController extends Game {
   /// [deltaTime] The time elapsed since the last frame, used for updating
   /// the UI elements.
   @override
-  void renderUI(double deltaTime) {
+  void updateUI(double deltaTime) {
     for (final obj in ui) {
       if (obj.shouldUpdate(gameState) || obj.shouldRender(gameState)) {
         obj.update(deltaTime);
@@ -297,5 +287,22 @@ class GameController extends Game {
     gameState = GameState.playing;
     dash.isReadyToPlay = true;
     dash.flap();
+  }
+
+  @override
+  void update(double dt) {
+    timerToStart += dt;
+    //avoid entering the game loop if the game already started
+    if (isScreenTouched && timerToStart > 1.5 && gameState != GameState.gameOver) {
+      if (pipeGenerator != null) {
+        pipeGenerator!.generatePipes(dt);
+      }
+    }
+    removeObjects();
+    updateUI(dt);
+    updateGameObjects(dt);
+    if (showFPS) {
+      getFPS();
+    }
   }
 }
