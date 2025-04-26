@@ -125,6 +125,11 @@ class GameController extends BaseGameLoop implements Game {
   @override
   void init() {
     loadAssets();
+    assetManager.audioSettings.addBackgroundSongs([
+      'sounds/bg-song1.mp3',
+      'sounds/bg-song2.mp3',
+    ]);
+    assetManager.audioSettings.playBackgroundAudio();
   }
 
   /// Calculates and logs the current frames per second (FPS) of the game.

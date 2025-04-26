@@ -1,15 +1,18 @@
 import 'package:flappy_dash_ce/core/asset_manager.dart';
+import 'package:flappy_dash_ce/core/audio/audio.dart';
 import 'package:flappy_dash_ce/core/base_game_loop.dart';
 import 'package:flappy_dash_ce/game/loader.dart';
 
 class LoaderController extends BaseGameLoop {
   late AssetManager assetManager;
+  //late AudioSettings audioSettings;
   late Loader loader;
   double progress = 0;
 
   LoaderController() {
     loader = Loader();
     assetManager = AssetManager();
+    assetManager.setAudioSettings(AudioSettings());
   }
 
   void loadAssets() {

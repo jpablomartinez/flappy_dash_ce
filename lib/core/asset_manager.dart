@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flappy_dash_ce/core/audio/audio.dart';
 import 'package:flappy_dash_ce/utils/sprite.dart';
 
 class AssetManager {
@@ -12,31 +13,46 @@ class AssetManager {
   late Image upperPipe;
   late Image lowerPipe;
   late Image floor;
+  late AudioSettings audioSettings;
 
   int loadedAssets = 0;
   int totalAssets = 0;
 
-  Future<void> loadSprites() async {
+  void setAudioSettings(AudioSettings a) {
+    audioSettings = a;
+  }
+
+  Future<void> loadSprites(Map<String, void Function(Image)> sprites) async {
+    for (final asset in sprites.entries) {
+      final image = await loadSprite(asset.key);
+      asset.value(image);
+      loadedAssets++;
+      await Future.delayed(const Duration(milliseconds: 800));
+    }
+  }
+
+  Future<void> loadAudios(List<String> audios) async {
+    for (final audio in audios) {
+      await audioSettings.preload(audio);
+      loadedAssets++;
+      await Future.delayed(const Duration(milliseconds: 800));
+    }
+  }
+
+  Future<void> loadAssets() async {
+    final List<String> bgAudiosPath = [
+      'sounds/bg-song1.mp3',
+      'sounds/bg-song2.mp3',
+    ];
     final assetsToLoad = <String, void Function(Image)>{
       'assets/sprites/basic_pipe.png': (img) => upperPipe = img,
       'assets/sprites/lower_pipe.png': (img) => lowerPipe = img,
       'assets/sprites/base.png': (img) => floor = img,
       'assets/sprites/dash/birdie.png': (img) => dashSprite = img,
     };
-    totalAssets += assetsToLoad.length;
-    for (final entry in assetsToLoad.entries) {
-      final image = await loadSprite(entry.key);
-      entry.value(image);
-      loadedAssets++;
-      await Future.delayed(const Duration(milliseconds: 800));
-    }
-  }
-
-  Future<void> loadAudios() async {}
-
-  Future<void> loadAssets() async {
-    await loadSprites();
-    await loadAudios();
+    totalAssets += assetsToLoad.length + bgAudiosPath.length;
+    await loadSprites(assetsToLoad);
+    await loadAudios(bgAudiosPath);
   }
 
   double getLoadedAssetsPercentage() {
