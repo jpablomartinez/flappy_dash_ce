@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flappy_dash_ce/core/game_object.dart';
 import 'package:flappy_dash_ce/core/game_state.dart';
 import 'package:flappy_dash_ce/core/physics.dart';
+import 'package:flappy_dash_ce/core/size.dart';
 import 'package:flappy_dash_ce/core/sprite_animation.dart';
 
 class Dash extends GameObject {
@@ -15,7 +16,7 @@ class Dash extends GameObject {
   Dash(Image sprite, Offset pos, Size s, GameState state) {
     position = pos;
     initial = pos;
-    physics = Physics(obj: this);
+    physics = Physics(obj: this, yOffsetLowerLimit: SizeManager.instance.getFloorYPosition() - 50);
     size = s;
     spriteSheet = sprite;
     gameState = state;

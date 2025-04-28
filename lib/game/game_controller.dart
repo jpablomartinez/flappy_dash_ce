@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flappy_dash_ce/core/asset_manager.dart';
 import 'package:flappy_dash_ce/core/base_game_loop.dart';
+import 'package:flappy_dash_ce/core/size.dart';
 import 'package:flappy_dash_ce/core/vibrate.dart';
 import 'package:flappy_dash_ce/db/shared_preferences.dart';
 import 'package:flappy_dash_ce/game/game_over_screen.dart';
@@ -59,7 +60,7 @@ class GameController extends BaseGameLoop implements Game {
     ui = [];
     initialPos = const Offset(50, 400);
     gameOverScreen = GameOverScreen(
-      const Size(430, 900),
+      Size(SizeManager.instance.screen.width, SizeManager.instance.screen.height),
       const Offset(0, 0),
     );
     sharedPreferences = SharedPreferences();
@@ -77,20 +78,27 @@ class GameController extends BaseGameLoop implements Game {
   /// points display, and restart button to the UI.
   @override
   Future<void> loadAssets() async {
+    print(SizeManager.instance.screen.width);
     pipeGenerator = PipeGenerator(isAlive: true, obj: gameObjects);
     //***********
-    points = Points(const Size(100, 100), const Offset(200, 70));
-    int bestScore = await sharedPreferences.load('bestScore') as int;
+    points = Points(
+      const Size(100, 100),
+      Offset(SizeManager.instance.screen.width * 0.47, 70),
+    );
+    int bestScore = await sharedPreferences.load('bestScore') ?? 0;
     points.setGameState(gameState);
     points.setBestScore(bestScore);
     gameOverScreen.bestScore = bestScore;
     restartButton = Button(
-      parentSize: const Size(150, 200),
+      parentSize: Size(
+        SizeManager.instance.screen.width * 0.35,
+        SizeManager.instance.screen.height * 0.214,
+      ),
       label: 'Restart',
       onTap: () {
         restart();
       },
-      rect: const Rect.fromLTWH(((430 - 150) / 2) + 5, 115 + initialTop, 144, 42),
+      rect: Rect.fromLTWH(((SizeManager.instance.screen.width - 150) / 2) + 5, 115 + initialTop, 144, 42),
     );
     // ***********
     ui.add(gameOverScreen);
@@ -99,25 +107,26 @@ class GameController extends BaseGameLoop implements Game {
 
     pipeGenerator!.setUpperSprite(assetManager.upperPipe);
     pipeGenerator!.setLowerSprite(assetManager.lowerPipe);
+    print('screen: ${SizeManager.instance.screen.toString()}');
     gameObjects.addAll([
       Floor(
         assetManager.floor,
-        const Offset(0, 750),
-        const Size(301, 120),
+        Offset(0, SizeManager.instance.getFloorYPosition()),
+        Size(SizeManager.instance.getFloorXPosition(), SizeManager.instance.getFloorHeight()),
       ),
       Floor(
         assetManager.floor,
-        const Offset(301, 750),
-        const Size(301, 120),
+        Offset(SizeManager.instance.getFloorXPosition(), SizeManager.instance.getFloorYPosition()),
+        Size(SizeManager.instance.getFloorXPosition(), SizeManager.instance.getFloorHeight()),
       ),
       Floor(
         assetManager.floor,
-        const Offset(602, 750),
-        const Size(301, 120),
+        Offset(SizeManager.instance.getFloorXPosition() * 2, SizeManager.instance.getFloorYPosition()),
+        Size(SizeManager.instance.getFloorXPosition(), SizeManager.instance.getFloorHeight()),
       ),
       dash = Dash(
         assetManager.dashSprite,
-        const Offset(50, 400),
+        Offset(SizeManager.instance.getDashInitialXPosition(), SizeManager.instance.getDashInitialYPosition()),
         const Size(56.8, 40),
         gameState,
       ),
@@ -129,10 +138,11 @@ class GameController extends BaseGameLoop implements Game {
   void init() {
     loadAssets();
     assetManager.audioSettings.addBackgroundSongs([
-      'sounds/bg-song1.mp3',
       'sounds/bg-song2.mp3',
+      'sounds/bg-song3.mp3',
+      'sounds/bg-song1.mp3',
     ]);
-    assetManager.audioSettings.playBackgroundAudio();
+    //assetManager.audioSettings.playBackgroundAudio();
   }
 
   /// Calculates and logs the current frames per second (FPS) of the game.
@@ -208,7 +218,7 @@ class GameController extends BaseGameLoop implements Game {
   void restart() {
     if (gameState == GameState.gameOver) {
       assetManager.audioSettings.restartPlaylist();
-      assetManager.audioSettings.playBackgroundAudio();
+      //assetManager.audioSettings.playBackgroundAudio();
       start();
       for (final uiElement in ui) {
         if (uiElement is GameOverScreen || uiElement is Button) {

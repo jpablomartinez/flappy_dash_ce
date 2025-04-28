@@ -43,6 +43,7 @@ class AssetManager {
     final List<String> bgAudiosPath = [
       'sounds/bg-song1.mp3',
       'sounds/bg-song2.mp3',
+      'sounds/bg-song3.mp3',
     ];
     final assetsToLoad = <String, void Function(Image)>{
       'assets/sprites/basic_pipe.png': (img) => upperPipe = img,

@@ -1,4 +1,5 @@
 import 'package:flappy_dash_ce/core/game_painter.dart';
+import 'package:flappy_dash_ce/core/size.dart';
 import 'package:flappy_dash_ce/game/game_controller.dart';
 import 'package:flappy_dash_ce/ui/button.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,8 @@ class GameViewState extends State<GameView> {
         }
       },
       child: Container(
+        width: SizeManager.instance.screen.width,
+        height: SizeManager.instance.screen.height,
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/basic_background.png'),

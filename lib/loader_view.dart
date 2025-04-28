@@ -1,6 +1,7 @@
 import 'package:flappy_dash_ce/core/game_state.dart';
 import 'package:flappy_dash_ce/core/loader_painter.dart';
 import 'package:flappy_dash_ce/core/logo.dart';
+import 'package:flappy_dash_ce/core/size.dart';
 import 'package:flappy_dash_ce/game_view.dart';
 import 'package:flappy_dash_ce/game/loader_controller.dart';
 import 'package:flutter/material.dart';
@@ -16,10 +17,12 @@ class LoaderScreenViewState extends State<LoaderScreenView> {
   late LoaderController loaderController;
   late Logo logo;
   late GameState gameState;
+  late SizeManager sizeManager;
 
   @override
   void initState() {
     logo = Logo();
+    sizeManager = SizeManager();
     gameState = GameState.loading;
     loaderController = LoaderController();
     loaderController.loadAssets();
@@ -42,6 +45,7 @@ class LoaderScreenViewState extends State<LoaderScreenView> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    sizeManager.setSizeScreen(size);
     logo.size = size;
     return SafeArea(
       child: Container(

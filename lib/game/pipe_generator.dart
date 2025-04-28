@@ -1,4 +1,5 @@
 import 'package:flappy_dash_ce/core/game_object.dart';
+import 'package:flappy_dash_ce/core/size.dart';
 import 'package:flappy_dash_ce/game/pipe.dart';
 import 'package:flappy_dash_ce/game/point_collider.dart';
 import 'package:flutter/material.dart';
@@ -31,21 +32,30 @@ class PipeGenerator {
   }
 
   void generatePipe() {
-    double upperYSize = random.nextInt(300) + 50;
-    double lowerYSize = 750 - 140 - upperYSize;
-    Size upperSize = Size(85, upperYSize);
-    Size lowerSize = Size(85, lowerYSize);
+    double upperYSize = random.nextInt((SizeManager.instance.screen.height * 0.32).toInt()) + 50;
+    double lowerYSize = SizeManager.instance.getFloorYPosition() - SizeManager.instance.getWhiteSpace() - upperYSize;
+    Size upperSize = Size(SizeManager.instance.screen.width * 0.2, upperYSize);
+    Size lowerSize = Size(SizeManager.instance.screen.width * 0.2, lowerYSize);
     Pipe upperPipe = Pipe(
       upperSprite!,
-      const Offset(430, 0),
+      Offset(SizeManager.instance.screen.width, 0),
       upperSize,
     );
     Pipe lowerPipe = Pipe(
       lowerSprite!,
-      Offset(430, upperYSize + 140),
+      Offset(
+        SizeManager.instance.screen.width,
+        upperYSize + SizeManager.instance.getWhiteSpace(),
+      ),
       lowerSize,
     );
-    PointCollider pc = PointCollider(Offset(430, upperYSize), const Size(85, 140));
+    PointCollider pc = PointCollider(
+      Offset(SizeManager.instance.screen.width, upperYSize),
+      Size(
+        SizeManager.instance.screen.width * 0.2,
+        SizeManager.instance.getWhiteSpace(),
+      ),
+    );
     obj.addAll([upperPipe, pc, lowerPipe]);
   }
 

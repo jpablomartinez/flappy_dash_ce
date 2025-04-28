@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flappy_dash_ce/core/game_object.dart';
 import 'package:flappy_dash_ce/core/game_state.dart';
+import 'package:flappy_dash_ce/core/size.dart';
 import 'package:flappy_dash_ce/utils/constants.dart';
 import 'package:flutter/material.dart' as material;
 import 'dart:math';
@@ -40,10 +41,10 @@ class Button extends GameObject {
   @override
   void render(Canvas canvas) {
     if (animationTime > 0.18) {
-      final double left = (430 - 150) / 2; //leftCenter(430, 150);
+      final double left = (SizeManager.instance.screen.width - 150) / 2; //leftCenter(430, 150);
       Rect outerRect = Rect.fromLTWH(left, parentSize.height + top + 50, 154, 58);
       Rect middleRect = Rect.fromLTWH(left + 2, parentSize.height + top + 52, 150, 50);
-      innerRect = Rect.fromLTWH(rect.left, rect.top + top, rect.width, rect.height);
+      innerRect = Rect.fromLTWH(rect.left, parentSize.height + top + 56, rect.width, rect.height);
       canvas.drawRect(
         outerRect,
         Paint()

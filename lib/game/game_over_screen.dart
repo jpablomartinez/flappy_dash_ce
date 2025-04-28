@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flappy_dash_ce/core/game_state.dart';
+import 'package:flappy_dash_ce/core/size.dart';
 import 'package:flappy_dash_ce/utils/text.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:flappy_dash_ce/core/game_object.dart';
@@ -35,7 +36,7 @@ class GameOverScreen extends GameObject {
   bool shouldUpdate(GameState state) => state == GameState.gameOver;
 
   void renderScoreboard(Canvas canvas) {
-    final double left = leftCenter(430, 150);
+    final double left = leftCenter(SizeManager.instance.screen.width, 150);
 
     canvas.drawRect(
       Rect.fromLTWH(left, initialTop, scoreBoardSize.width, scoreBoardSize.height),
@@ -67,7 +68,7 @@ class GameOverScreen extends GameObject {
   }
 
   void renderButton(Canvas canvas, String text) {
-    final double left = leftCenter(430, 150);
+    final double left = leftCenter(SizeManager.instance.screen.width, 150);
     Rect outerRect = Rect.fromLTWH(left, scoreBoardSize.height + initialTop + 50, 154, 58);
     Rect middleRect = Rect.fromLTWH(left + 2, scoreBoardSize.height + initialTop + 52, 150, 50);
     Rect innerRect = Rect.fromLTWH(left + 5, scoreBoardSize.height + initialTop + 55, 144, 42);
@@ -102,7 +103,7 @@ class GameOverScreen extends GameObject {
   void render(Canvas canvas) {
     if (flash < 0.180) {
       canvas.drawRect(
-        const Rect.fromLTWH(0, 0, 430, 920),
+        Rect.fromLTWH(0, 0, SizeManager.instance.screen.width, SizeManager.instance.screen.height),
         Paint()
           ..style = PaintingStyle.fill
           ..color = material.Colors.black.withOpacity(0.9),

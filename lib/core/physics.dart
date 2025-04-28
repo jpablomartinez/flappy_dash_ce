@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flappy_dash_ce/core/game_object.dart';
 
 class Physics {
@@ -19,7 +18,7 @@ class Physics {
 
   Physics({
     required this.obj,
-    this.yOffsetLowerLimit = 700,
+    required this.yOffsetLowerLimit,
     this.yOffsetUpperLimit = -10,
     this.gravity = 650,
     this.impulse = -250,

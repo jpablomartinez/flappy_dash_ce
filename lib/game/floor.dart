@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flappy_dash_ce/core/game_object.dart';
 import 'package:flappy_dash_ce/core/game_state.dart';
+import 'package:flappy_dash_ce/core/size.dart';
 import 'package:flappy_dash_ce/core/sprite.dart';
 
 class Floor extends GameObject {
@@ -34,8 +35,8 @@ class Floor extends GameObject {
   @override
   void update(double deltaTime) {
     position = position.translate(-200 * deltaTime, 0);
-    if (position.dx < -301) {
-      position = position.translate(903, 0);
+    if (position.dx < -SizeManager.instance.getFloorXPosition()) {
+      position = position.translate(SizeManager.instance.getFloorXPosition() * 3, 0);
     }
   }
 
