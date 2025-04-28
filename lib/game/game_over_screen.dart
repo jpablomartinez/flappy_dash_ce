@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flappy_dash_ce/core/game_state.dart';
+import 'package:flappy_dash_ce/utils/text.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:flappy_dash_ce/core/game_object.dart';
 import 'dart:math';
@@ -95,15 +96,6 @@ class GameOverScreen extends GameObject {
     final double y = innerRect.top + (innerRect.height - paragraph.height) / 2;
 
     canvas.drawParagraph(paragraph, Offset(x, y));
-  }
-
-  Paragraph renderText(String text, double fontSize, Color color) {
-    ParagraphStyle style = ParagraphStyle(fontSize: fontSize, fontFamily: 'FlappyBirdy');
-    ParagraphBuilder paragraphBuilder = ParagraphBuilder(style);
-    TextStyle textStyle = TextStyle(color: color);
-    paragraphBuilder.pushStyle(textStyle);
-    paragraphBuilder.addText(text);
-    return paragraphBuilder.build()..layout(const ParagraphConstraints(width: double.infinity));
   }
 
   @override

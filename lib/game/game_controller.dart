@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flappy_dash_ce/core/asset_manager.dart';
 import 'package:flappy_dash_ce/core/base_game_loop.dart';
+import 'package:flappy_dash_ce/core/vibrate.dart';
 import 'package:flappy_dash_ce/db/shared_preferences.dart';
 import 'package:flappy_dash_ce/game/game_over_screen.dart';
 import 'package:flappy_dash_ce/utils/constants.dart';
@@ -42,6 +43,7 @@ class GameController extends BaseGameLoop implements Game {
   late GameOverScreen gameOverScreen;
   late SharedPreferences sharedPreferences;
   late AssetManager assetManager;
+  late VibrateController vibrateController;
 
   var logger = Logger();
 
@@ -62,6 +64,7 @@ class GameController extends BaseGameLoop implements Game {
     );
     sharedPreferences = SharedPreferences();
     assetManager = AssetManager();
+    vibrateController = VibrateController();
   }
 
   /// Loads game assets asynchronously and initializes game objects and UI elements.
@@ -183,6 +186,9 @@ class GameController extends BaseGameLoop implements Game {
   /// game state for the dash and points objects.
   @override
   void gameover() {
+    vibrateController.vibrate();
+    assetManager.audioSettings.stop();
+    //play game over music
     gameOverScreen.score = points.record;
     if (points.bestScore < points.record) {
       gameOverScreen.bestScore = points.record;
@@ -201,6 +207,8 @@ class GameController extends BaseGameLoop implements Game {
   @override
   void restart() {
     if (gameState == GameState.gameOver) {
+      assetManager.audioSettings.restartPlaylist();
+      assetManager.audioSettings.playBackgroundAudio();
       start();
       for (final uiElement in ui) {
         if (uiElement is GameOverScreen || uiElement is Button) {

@@ -42,6 +42,16 @@ class AudioSettings {
     _background.onPlayerComplete.listen(_handleCompleteSong);
   }
 
+  void restartPlaylist() {
+    List<String> playlist = [];
+    for (final song in _backgroundSongs) {
+      playlist.add(song);
+    }
+    playlist.shuffle();
+    _backgroundSongs = Queue.of(playlist);
+    _background.onPlayerComplete.listen(_handleCompleteSong);
+  }
+
   /// Plays a gamepad sound from the specified source.
   ///
   /// This method attempts to play an audio file for gamepad interactions
