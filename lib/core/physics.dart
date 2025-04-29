@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flappy_dash_ce/core/game_object.dart';
+import 'package:flappy_dash_ce/core/size.dart';
 
 class Physics {
   final GameObject obj;
@@ -15,14 +16,15 @@ class Physics {
   double maxJumpTime;
   double angle = 0;
   double tiltDelayTimer = 0;
+  double fallingTime = 0;
 
   Physics({
     required this.obj,
     required this.yOffsetLowerLimit,
     this.yOffsetUpperLimit = -10,
-    this.gravity = 650,
-    this.impulse = -250,
-    this.maxFallSpeed = 680,
+    this.gravity = 800,
+    this.impulse = -270,
+    this.maxFallSpeed = 600,
     this.maxJumpTime = 0.2,
   });
 
@@ -50,8 +52,6 @@ class Physics {
       }
       velocityY += gravity * dt;
       velocityY = velocityY.clamp(-double.infinity, maxFallSpeed);
-      //double yPosition = velocityY * dt;
-      //yPosition = yPosition.clamp(yOffsetLowerLimit, yOffsetUpperLimit);
       obj.position = obj.position.translate(0, velocityY * dt);
       getAngle(dt);
     }
@@ -59,23 +59,27 @@ class Physics {
 
   void getAngle(double dt) {
     double maxTiltUp = -0.8;
-    double maxTiltDown = 1.3;
-    double tiltLerpSpeed = 4.0; // how fast it smooths between angles
+    double maxTiltDown = 1.57; // 90° downward fall
+    double tiltLerpSpeed = 6.0;
     double targetAngle;
+
     if (isJumping) {
       targetAngle = maxTiltUp;
-      tiltDelayTimer = 0;
+      fallingTime = 0;
     } else {
-      if (tiltDelayTimer < 0.8) {
-        tiltDelayTimer += dt; // Increment the delay timer
-        targetAngle = maxTiltUp; // Keep the bird tilted upwards for now
+      fallingTime += dt;
+      if (fallingTime < 0.30) {
+        targetAngle = maxTiltUp;
       } else {
-        targetAngle = (velocityY / maxFallSpeed) * maxTiltDown;
-        targetAngle = targetAngle.clamp(maxTiltUp, maxTiltDown);
+        if (fallingTime >= 0.40 || obj.position.dy >= SizeManager.instance.screen.height - SizeManager.instance.getFloorHeight() - 30) {
+          targetAngle = maxTiltDown;
+        } else {
+          targetAngle = (velocityY / maxFallSpeed) * maxTiltDown;
+          targetAngle = targetAngle.clamp(maxTiltUp, maxTiltDown);
+        }
       }
     }
 
-    // Smooth transition
     angle = lerpDouble(angle, targetAngle, tiltLerpSpeed * dt)!;
   }
 }

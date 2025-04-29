@@ -55,7 +55,7 @@ class Dash extends GameObject {
 
   @override
   Rect get collider => Rect.fromLTWH(
-        position.dx + 7,
+        position.dx + 15,
         position.dy + 4,
         size.width - 4 * 4,
         size.height - 2 * 4,

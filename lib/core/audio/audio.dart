@@ -6,7 +6,7 @@ import 'package:logger/web.dart';
 class AudioSettings {
   static final _logger = Logger();
 
-  final double _defaultBackgroundVolume = 0.60;
+  final double _defaultBackgroundVolume = 0.50;
   final double _defaultSfxVolume = 0.45;
   final double _defaultGamepadVolume = 0.25;
 
@@ -195,5 +195,9 @@ class AudioSettings {
   /// if it was previously paused.
   Future<void> resume() async {
     await _background.resume();
+  }
+
+  Future<void> playGameoverSound(String source) async {
+    await playSfx(source);
   }
 }

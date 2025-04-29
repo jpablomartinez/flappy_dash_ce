@@ -78,9 +78,8 @@ class GameController extends BaseGameLoop implements Game {
   /// points display, and restart button to the UI.
   @override
   Future<void> loadAssets() async {
-    print(SizeManager.instance.screen.width);
     pipeGenerator = PipeGenerator(isAlive: true, obj: gameObjects);
-    //***********
+    //ALL THIS CODE COULD BE IN ANOTHER SECTION OR CONSTRUCTORS
     points = Points(
       const Size(100, 100),
       Offset(SizeManager.instance.screen.width * 0.47, 70),
@@ -107,7 +106,6 @@ class GameController extends BaseGameLoop implements Game {
 
     pipeGenerator!.setUpperSprite(assetManager.upperPipe);
     pipeGenerator!.setLowerSprite(assetManager.lowerPipe);
-    print('screen: ${SizeManager.instance.screen.toString()}');
     gameObjects.addAll([
       Floor(
         assetManager.floor,
@@ -142,7 +140,7 @@ class GameController extends BaseGameLoop implements Game {
       'sounds/bg-song3.mp3',
       'sounds/bg-song1.mp3',
     ]);
-    //assetManager.audioSettings.playBackgroundAudio();
+    assetManager.audioSettings.playBackgroundAudio();
   }
 
   /// Calculates and logs the current frames per second (FPS) of the game.
@@ -161,34 +159,6 @@ class GameController extends BaseGameLoop implements Game {
     logger.d('FPS: $fps');
   }
 
-  /// Handles the game loop tick event, updating the game state based on the elapsed time.
-  ///
-  /// Calculates the time delta since the last tick and updates the timer for starting the game.
-  /// If the screen is touched and the game is not over, it triggers the pipe generation.
-  /// Also manages the removal of game objects and rendering of the UI and game objects.
-  ///
-  /// @param elapsedTime The duration since the game started.
-  //@override
-  void onTick2(Duration elapsedTime) {
-    /*  final double dt = (elapsedTime.inMilliseconds - lastTime) / 1000;
-    timerToStart += dt;
-    lastTime = elapsedTime.inMilliseconds.toDouble();
-
-    //avoid entering the game loop if the game already started
-    if (isScreenTouched && elapsedTime.inMilliseconds > 1500 && gameState != GameState.gameOver) {
-      if (pipeGenerator != null) {
-        pipeGenerator!.generatePipes(dt);
-      }
-    }
-
-    removeObjects();
-    updateUI(dt);
-    updateGameObjects(dt);
-    if (showFPS) {
-      getFPS();
-    }*/
-  }
-
   /// Handles the game over logic by updating the score and best score.
   ///
   /// Sets the game state to 'gameOver', updates the best score if the current
@@ -198,7 +168,7 @@ class GameController extends BaseGameLoop implements Game {
   void gameover() {
     vibrateController.vibrate();
     assetManager.audioSettings.stop();
-    //play game over music
+    assetManager.audioSettings.playGameoverSound('sounds/gameover.mp3');
     gameOverScreen.score = points.record;
     if (points.bestScore < points.record) {
       gameOverScreen.bestScore = points.record;
@@ -218,7 +188,7 @@ class GameController extends BaseGameLoop implements Game {
   void restart() {
     if (gameState == GameState.gameOver) {
       assetManager.audioSettings.restartPlaylist();
-      //assetManager.audioSettings.playBackgroundAudio();
+      assetManager.audioSettings.playBackgroundAudio();
       start();
       for (final uiElement in ui) {
         if (uiElement is GameOverScreen || uiElement is Button) {

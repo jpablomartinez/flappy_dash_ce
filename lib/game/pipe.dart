@@ -19,7 +19,7 @@ class Pipe extends GameObject {
         position.dx + 3,
         position.dy + 4,
         size.width - 2 * 4,
-        size.height - 2 * 4,
+        size.height - 3,
       );
 
   @override

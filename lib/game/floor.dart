@@ -25,6 +25,14 @@ class Floor extends GameObject {
   }
 
   @override
+  Rect get collider => Rect.fromLTWH(
+        position.dx + 3,
+        position.dy,
+        size.width - 3,
+        size.height,
+      );
+
+  @override
   bool shouldUpdate(GameState state) => state != GameState.gameOver;
 
   @override

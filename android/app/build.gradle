@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.flappy_dash_ce"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

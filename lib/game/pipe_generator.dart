@@ -9,10 +9,6 @@ import 'dart:math' as math;
 class PipeGenerator {
   bool isAlive;
   double elapsedTime = 0;
-  Pipe? upper1;
-  Pipe? upper2;
-  Pipe? upper3;
-  //Pipe? lowerPipe;
   List<GameObject> obj;
   ui.Image? upperSprite;
   ui.Image? lowerSprite;
