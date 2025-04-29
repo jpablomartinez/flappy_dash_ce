@@ -20,6 +20,10 @@ This project is built with **Flutter**, ensuring versatility and compatibility w
     flutter run
     ```
 
+## Sample 🎮
+
+![Alt Text](/assets/0429.gif)
+
 ### Disclaimers
 
 -   This is my second intent to create my own game engine only for fun. I added a Loader View only to
