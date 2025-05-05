@@ -1,0 +1,20 @@
+{
+    "vibration": {
+        "amplitude": 50
+    },
+    "bird": {
+        "size_width": 50,
+        "size_height": 50,
+        "x_initial_position": 50,
+        "y_initial_position": 200,
+        "y_limit_position_factor": 0.8,
+        "force_jump": 30,
+        "path": "assets/sprites/dash/birdie.png"
+    },
+    "pipe": {},
+    "floor": {},
+    "physics": {
+        "gravity": 9.8
+    },
+    "spawner": {}
+}

@@ -1,4 +1,4 @@
-import 'package:flappy_dash_ce/core/game_storage.dart';
+import 'package:flappy_dash_ce/db/game_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferences extends GameStorage {

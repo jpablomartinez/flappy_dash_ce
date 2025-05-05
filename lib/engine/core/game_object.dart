@@ -1,5 +1,5 @@
-import 'package:flappy_dash_ce/core/collider.dart';
-import 'package:flappy_dash_ce/core/game_state.dart';
+import 'package:flappy_dash_ce/engine/physics/colliders/collider.dart';
+import 'package:flappy_dash_ce/engine/core/game_state.dart';
 import 'package:flutter/material.dart';
 
 abstract class GameObject with Collider {

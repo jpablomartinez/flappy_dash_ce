@@ -1,9 +1,9 @@
 import 'dart:ui';
-import 'package:flappy_dash_ce/core/game_state.dart';
-import 'package:flappy_dash_ce/core/size.dart';
+import 'package:flappy_dash_ce/engine/core/game_state.dart';
+import 'package:flappy_dash_ce/engine/utils/size.dart';
 import 'package:flappy_dash_ce/utils/text.dart';
 import 'package:flutter/material.dart' as material;
-import 'package:flappy_dash_ce/core/game_object.dart';
+import 'package:flappy_dash_ce/engine/core/game_object.dart';
 import 'dart:math';
 
 class GameOverScreen extends GameObject {

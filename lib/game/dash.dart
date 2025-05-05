@@ -1,9 +1,9 @@
 import 'dart:ui';
-import 'package:flappy_dash_ce/core/game_object.dart';
-import 'package:flappy_dash_ce/core/game_state.dart';
-import 'package:flappy_dash_ce/core/physics.dart';
-import 'package:flappy_dash_ce/core/size.dart';
-import 'package:flappy_dash_ce/core/sprite_animation.dart';
+import 'package:flappy_dash_ce/engine/core/game_object.dart';
+import 'package:flappy_dash_ce/engine/core/game_state.dart';
+import 'package:flappy_dash_ce/engine/physics/rules/physics.dart';
+import 'package:flappy_dash_ce/engine/utils/size.dart';
+import 'package:flappy_dash_ce/engine/sprite/sprite_animation.dart';
 
 class Dash extends GameObject {
   late Image spriteSheet;

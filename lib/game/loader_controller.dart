@@ -1,6 +1,6 @@
-import 'package:flappy_dash_ce/core/asset_manager.dart';
-import 'package:flappy_dash_ce/core/audio/audio.dart';
-import 'package:flappy_dash_ce/core/base_game_loop.dart';
+import 'package:flappy_dash_ce/engine/utils/asset_manager.dart';
+import 'package:flappy_dash_ce/engine/audio/audio.dart';
+import 'package:flappy_dash_ce/engine/core/base_game_loop.dart';
 import 'package:flappy_dash_ce/game/loader.dart';
 
 class LoaderController extends BaseGameLoop {

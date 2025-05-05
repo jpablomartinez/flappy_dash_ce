@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart' as material;
-import 'package:flappy_dash_ce/core/game_object.dart';
+import 'package:flappy_dash_ce/engine/core/game_object.dart';
 import 'package:flappy_dash_ce/utils/text.dart';
 
 class Logo extends GameObject {

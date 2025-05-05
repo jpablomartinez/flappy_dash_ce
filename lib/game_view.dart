@@ -1,5 +1,5 @@
-import 'package:flappy_dash_ce/core/game_painter.dart';
-import 'package:flappy_dash_ce/core/size.dart';
+import 'package:flappy_dash_ce/engine/painter/game_painter.dart';
+import 'package:flappy_dash_ce/engine/utils/size.dart';
 import 'package:flappy_dash_ce/game/game_controller.dart';
 import 'package:flappy_dash_ce/ui/button.dart';
 import 'package:flutter/material.dart';

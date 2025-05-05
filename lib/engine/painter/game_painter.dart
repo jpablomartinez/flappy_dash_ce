@@ -1,5 +1,5 @@
-import 'package:flappy_dash_ce/core/game_object.dart';
-import 'package:flappy_dash_ce/core/game_state.dart';
+import 'package:flappy_dash_ce/engine/core/game_object.dart';
+import 'package:flappy_dash_ce/engine/core/game_state.dart';
 import 'package:flutter/rendering.dart';
 
 class GamePainter extends CustomPainter {

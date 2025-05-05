@@ -1,4 +1,4 @@
-import 'package:flappy_dash_ce/core/game_state.dart';
+import 'package:flappy_dash_ce/engine/core/game_state.dart';
 
 abstract class Game {
   Future<void> loadAssets();

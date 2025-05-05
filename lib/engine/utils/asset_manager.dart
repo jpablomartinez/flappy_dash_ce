@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:flappy_dash_ce/core/audio/audio.dart';
+import 'package:flappy_dash_ce/engine/audio/audio.dart';
 import 'package:flappy_dash_ce/utils/sprite.dart';
 
 class AssetManager {

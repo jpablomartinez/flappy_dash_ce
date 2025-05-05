@@ -1,9 +1,9 @@
 import 'dart:ui';
 
-import 'package:flappy_dash_ce/core/game_object.dart';
-import 'package:flappy_dash_ce/core/game_state.dart';
-import 'package:flappy_dash_ce/core/size.dart';
-import 'package:flappy_dash_ce/core/sprite.dart';
+import 'package:flappy_dash_ce/engine/core/game_object.dart';
+import 'package:flappy_dash_ce/engine/core/game_state.dart';
+import 'package:flappy_dash_ce/engine/utils/size.dart';
+import 'package:flappy_dash_ce/engine/sprite/sprite.dart';
 
 class Floor extends GameObject {
   late Image image;

@@ -1,5 +1,5 @@
-import 'package:flappy_dash_ce/core/game_object.dart';
-import 'package:flappy_dash_ce/core/size.dart';
+import 'package:flappy_dash_ce/engine/core/game_object.dart';
+import 'package:flappy_dash_ce/engine/utils/size.dart';
 import 'package:flappy_dash_ce/game/pipe.dart';
 import 'package:flappy_dash_ce/game/point_collider.dart';
 import 'package:flutter/material.dart';
