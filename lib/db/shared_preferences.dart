@@ -11,14 +11,12 @@ class SharedPreferences extends GameStorage {
   @override
   Future<void> save(String key, value) async {
     final SharedPreferencesWithCache prefs = await _prefs;
-    //TODO: Support for others types
     await prefs.setInt(key, value);
   }
 
   @override
   Future<T?> load<T>(String key) async {
     final SharedPreferencesWithCache prefs = await _prefs;
-    //TODO: Support for others types
     dynamic result = prefs.getInt(key);
     return result as T?;
   }
@@ -26,7 +24,6 @@ class SharedPreferences extends GameStorage {
   @override
   Future<void> update(String key, value) async {
     final SharedPreferencesWithCache prefs = await _prefs;
-    //TODO: Support for others types
     await prefs.setInt(key, value);
   }
 

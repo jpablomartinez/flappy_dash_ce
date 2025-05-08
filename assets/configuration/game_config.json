@@ -1,4 +1,10 @@
 {
+    "screen": {
+        "floor_height_factor": 0.1957,
+        "dash_initial_y_position_factor": 0.43,
+        "floor_initial_x_position_factor": 0.7,
+        "white_space_factor": 0.15
+    },
     "vibration": {
         "amplitude": 50
     },
@@ -14,7 +20,15 @@
     "pipe": {},
     "floor": {},
     "physics": {
-        "gravity": 9.8
+        "gravity": 800,
+        "impulse": -270,
+        "maxFallSpeed": 600,
+        "maxJumpTime": 0.2,
+        "maxTiltUp": -0.8,
+        "maxTiltDown": 1.57,
+        "tiltLerpSpeed": 6.0,
+        "fallingTime": 0.3,
+        "maxFallingTime": 0.4
     },
     "spawner": {}
 }

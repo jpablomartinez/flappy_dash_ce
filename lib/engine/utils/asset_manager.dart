@@ -27,7 +27,7 @@ class AssetManager {
       final image = await loadSprite(asset.key);
       asset.value(image);
       loadedAssets++;
-      await Future.delayed(const Duration(milliseconds: 800));
+      await Future.delayed(const Duration(milliseconds: 500));
     }
   }
 
@@ -35,7 +35,7 @@ class AssetManager {
     for (final audio in audios) {
       await audioSettings.preload(audio);
       loadedAssets++;
-      await Future.delayed(const Duration(milliseconds: 800));
+      await Future.delayed(const Duration(milliseconds: 500));
     }
   }
 
