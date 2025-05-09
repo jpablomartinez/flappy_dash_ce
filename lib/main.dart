@@ -1,5 +1,5 @@
 //import 'package:flappy_dash_ce/game.dart';
-import 'package:flappy_dash_ce/loader_view.dart';
+import 'package:flappy_dash_ce/scenes/loader_view.dart';
 import 'package:flutter/material.dart';
 
 void main() {

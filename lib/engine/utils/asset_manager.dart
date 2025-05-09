@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flappy_dash_ce/configuration/game_config.dart';
 import 'package:flappy_dash_ce/engine/audio/audio.dart';
 import 'package:flappy_dash_ce/utils/sprite.dart';
 
@@ -14,6 +15,8 @@ class AssetManager {
   late Image lowerPipe;
   late Image floor;
   late AudioSettings audioSettings;
+
+  final GameConfig gameConfig = GameConfig();
 
   int loadedAssets = 0;
   int totalAssets = 0;
@@ -39,6 +42,11 @@ class AssetManager {
     }
   }
 
+  Future<void> loadConfiguration() async {
+    await gameConfig.load('assets/configuration/game_config.json');
+    return;
+  }
+
   Future<void> loadAssets() async {
     final List<String> bgAudiosPath = [
       'sounds/bg-song1.mp3',
@@ -53,6 +61,7 @@ class AssetManager {
       'assets/sprites/dash/birdie.png': (img) => dashSprite = img,
     };
     totalAssets += assetsToLoad.length + bgAudiosPath.length;
+    await loadConfiguration();
     await loadSprites(assetsToLoad);
     await loadAudios(bgAudiosPath);
   }

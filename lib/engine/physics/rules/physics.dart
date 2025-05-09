@@ -1,8 +1,10 @@
 import 'dart:ui';
+import 'package:flappy_dash_ce/configuration/game_config.dart';
 import 'package:flappy_dash_ce/engine/core/game_object.dart';
 import 'package:flappy_dash_ce/engine/utils/size.dart';
 
 class Physics {
+  final GameConfig gameConfig = GameConfig();
   final GameObject obj;
   final double gravity;
   final double impulse;
@@ -58,9 +60,9 @@ class Physics {
   }
 
   void getAngle(double dt) {
-    double maxTiltUp = -0.8;
-    double maxTiltDown = 1.57; // 90° downward fall
-    double tiltLerpSpeed = 6.0;
+    double maxTiltUp = gameConfig.maxTiltUp;
+    double maxTiltDown = gameConfig.maxTiltDown;
+    double tiltLerpSpeed = gameConfig.tiltLerpSpeed;
     double targetAngle;
 
     if (isJumping) {
@@ -68,10 +70,10 @@ class Physics {
       fallingTime = 0;
     } else {
       fallingTime += dt;
-      if (fallingTime < 0.30) {
+      if (fallingTime < gameConfig.fallingTime) {
         targetAngle = maxTiltUp;
       } else {
-        if (fallingTime >= 0.40 || obj.position.dy >= SizeManager.instance.screen.height - SizeManager.instance.getFloorHeight() - 30) {
+        if (fallingTime >= gameConfig.maxFallingTime || obj.position.dy >= SizeManager.instance.screen.height - SizeManager.instance.getFloorHeight() - 30) {
           targetAngle = maxTiltDown;
         } else {
           targetAngle = (velocityY / maxFallSpeed) * maxTiltDown;

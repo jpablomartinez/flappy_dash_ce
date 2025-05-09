@@ -1,8 +1,9 @@
+import 'package:flappy_dash_ce/configuration/game_config.dart';
 import 'package:flappy_dash_ce/engine/core/game_state.dart';
 import 'package:flappy_dash_ce/engine/painter/loader_painter.dart';
 import 'package:flappy_dash_ce/game/logo.dart';
 import 'package:flappy_dash_ce/engine/utils/size.dart';
-import 'package:flappy_dash_ce/game_view.dart';
+import 'package:flappy_dash_ce/scenes/game_view.dart';
 import 'package:flappy_dash_ce/game/loader_controller.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,7 @@ class LoaderScreenView extends StatefulWidget {
 }
 
 class LoaderScreenViewState extends State<LoaderScreenView> {
+  final GameConfig gameConfig = GameConfig();
   late LoaderController loaderController;
   late Logo logo;
   late GameState gameState;
@@ -22,10 +24,10 @@ class LoaderScreenViewState extends State<LoaderScreenView> {
   @override
   void initState() {
     logo = Logo();
-    sizeManager = SizeManager();
     gameState = GameState.loading;
     loaderController = LoaderController();
     loaderController.loadAssets();
+    sizeManager = SizeManager();
     loaderController.onTick = () {
       setState(() {});
       if (loaderController.progress >= 100) {

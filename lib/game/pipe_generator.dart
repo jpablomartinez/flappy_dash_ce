@@ -1,3 +1,4 @@
+import 'package:flappy_dash_ce/configuration/game_config.dart';
 import 'package:flappy_dash_ce/engine/core/game_object.dart';
 import 'package:flappy_dash_ce/engine/utils/size.dart';
 import 'package:flappy_dash_ce/game/pipe.dart';
@@ -13,6 +14,7 @@ class PipeGenerator {
   ui.Image? upperSprite;
   ui.Image? lowerSprite;
   final random = math.Random(DateTime.now().microsecondsSinceEpoch);
+  final GameConfig gameConfig = GameConfig();
 
   PipeGenerator({
     required this.isAlive,
@@ -28,10 +30,10 @@ class PipeGenerator {
   }
 
   void generatePipe() {
-    double upperYSize = random.nextInt((SizeManager.instance.screen.height * 0.32).toInt()) + 50;
+    double upperYSize = random.nextInt((SizeManager.instance.screen.height * gameConfig.pipeHeightFactor).toInt()) + 50;
     double lowerYSize = SizeManager.instance.getFloorYPosition() - SizeManager.instance.getWhiteSpace() - upperYSize;
-    Size upperSize = Size(SizeManager.instance.screen.width * 0.2, upperYSize);
-    Size lowerSize = Size(SizeManager.instance.screen.width * 0.2, lowerYSize);
+    Size upperSize = Size(SizeManager.instance.screen.width * gameConfig.pipeWidthFactor, upperYSize);
+    Size lowerSize = Size(SizeManager.instance.screen.width * gameConfig.pipeWidthFactor, lowerYSize);
     Pipe upperPipe = Pipe(
       upperSprite!,
       Offset(SizeManager.instance.screen.width, 0),
@@ -48,7 +50,7 @@ class PipeGenerator {
     PointCollider pc = PointCollider(
       Offset(SizeManager.instance.screen.width, upperYSize),
       Size(
-        SizeManager.instance.screen.width * 0.2,
+        SizeManager.instance.screen.width * gameConfig.pipeWidthFactor,
         SizeManager.instance.getWhiteSpace(),
       ),
     );
@@ -57,7 +59,7 @@ class PipeGenerator {
 
   void generatePipes(double dt) {
     elapsedTime += dt;
-    if (elapsedTime > 1.8) {
+    if (elapsedTime > gameConfig.waitTime) {
       generatePipe();
       elapsedTime = 0;
     }

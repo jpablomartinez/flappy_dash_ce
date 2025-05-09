@@ -1,10 +1,4 @@
 {
-    "screen": {
-        "floor_height_factor": 0.1957,
-        "dash_initial_y_position_factor": 0.43,
-        "floor_initial_x_position_factor": 0.7,
-        "white_space_factor": 0.15
-    },
     "vibration": {
         "amplitude": 50
     },
@@ -15,20 +9,30 @@
         "y_initial_position": 200,
         "y_limit_position_factor": 0.8,
         "force_jump": 30,
-        "path": "assets/sprites/dash/birdie.png"
+        "path": "assets/sprites/dash/birdie.png",
+        "dash_initial_y_position_factor": 0.43
     },
-    "pipe": {},
-    "floor": {},
+    "pipe": {
+        "width_factor": 0.2,
+        "height_factor": 0.32,
+        "white_space_factor": 0.15
+    },
+    "floor": {
+        "floor_height_factor": 0.1957,
+        "floor_initial_x_position_factor": 0.7
+    },
     "physics": {
         "gravity": 800,
         "impulse": -270,
-        "maxFallSpeed": 600,
-        "maxJumpTime": 0.2,
-        "maxTiltUp": -0.8,
-        "maxTiltDown": 1.57,
-        "tiltLerpSpeed": 6.0,
-        "fallingTime": 0.3,
-        "maxFallingTime": 0.4
+        "max_fall_speed": 600,
+        "max_jump_time": 0.2,
+        "max_tilt_up": -0.8,
+        "max_tilt_down": 1.57,
+        "tilt_lerp_speed": 6.0,
+        "falling_time": 0.3,
+        "max_falling_time": 0.4
     },
-    "spawner": {}
+    "spawner": {
+        "wait_time": 1.8
+    }
 }
